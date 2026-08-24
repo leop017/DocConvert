@@ -38,7 +38,7 @@ dependencies = [
 [project.optional-dependencies]
 xls = ["xlrd>=2.0.0"]
 doc = ["textract>=1.6.0"]
-all = ["docconvert[xls,doc]"]
+all = ["xlrd>=2.0.0", "textract>=1.6.0"]
 build = ["pyinstaller>=6.0"]
 
 [project.urls]

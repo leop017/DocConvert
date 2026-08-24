@@ -36,7 +36,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[all,build]"
+          pip install -e .
+          pip install ".[xls,doc,build]"
 
       - name: Build executable
         run: python build_scripts/build_exe.py --clean
