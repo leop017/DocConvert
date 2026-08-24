@@ -41,8 +41,8 @@ doc = ["textract>=1.6.0"]
 all = ["docconvert[xls,doc]"]
 
 [project.urls]
-Homepage = "https://github.com/docconvert/docconvert"
-BugTracker = "https://github.com/docconvert/docconvert/issues"
+Homepage = "https://github.com/leop017/codex"
+BugTracker = "https://github.com/leop017/codex/issues"
 
 [project.scripts]
 docconvert = "docconvert.cli:main_cli"

@@ -108,7 +108,27 @@ pip install -e ".[all]"
 python -m unittest discover -s tests -v
 ```
 
-All 172 tests pass.
+All tests pass under `unittest discover`.
+
+## Project Layout
+
+```text
+docconvert/
+  converters/   # excel / word / doc readers
+  cleaners/     # Word/Markdown cleaning pipeline
+  exporters/    # html / markdown / json exporters
+  controller/   # orchestration, async/cancel, overwrite checks
+  gui/          # Tkinter application
+  parsers/, chunkers/  # reserved extension points
+tests/          # unittest suite (mirrors the package layout)
+main.py         # GUI / CLI entry point
+```
+
+## Maintenance
+
+- Run the full test suite before opening a PR (see Testing above).
+- Keep `README.md`, `CONTRIBUTING.md`, and `pyproject.toml` in sync when adding new entry points, extras, or CLI flags.
+- Generated sources: regenerate `doc_convert.py.md` via `python gen_doc.py` whenever it changes; otherwise leave it untouched.
 
 ## License
 
