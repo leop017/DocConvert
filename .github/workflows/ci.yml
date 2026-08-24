@@ -22,13 +22,17 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies
+      - name: Install dependencies (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[doc]"
+
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
         run: |
           python -m pip install --upgrade pip
           pip install -e .
-          if [ "$RUNNER_OS" != "Windows" ]; then
-            pip install ".[doc]"
-          fi
 
       - name: Run tests
         run: python -m unittest discover -s tests -v
