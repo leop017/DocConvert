@@ -47,14 +47,13 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p release-artefacts
-          if [ -d "dist/DocConvert-${{ runner.os }}-${{ runner.arch }}" ]; then
-            # bundled onedir build
-            7z a -tzip "release-artefacts/DocConvert-${{ runner.os }}-${{ runner.arch }}.zip" \
-              "dist/DocConvert-${{ runner.os }}-${{ runner.arch }}" >/dev/null
-          else
-            # single-file build
-            cp "dist/DocConvert-${{ runner.os }}-${{ runner.arch }}/"* release-artefacts/
+          artefact_dir="$(ls -1 -d dist/DocConvert-* 2>/dev/null | head -n1 || true)"
+          if [ -z "${artefact_dir:-}" ]; then
+            echo "No artefact directory found under dist/" >&2
+            exit 1
           fi
+          archive_name="DocConvert-$(echo "${artefact_dir}" | sed 's|dist/||').zip"
+          7z a -tzip "release-artefacts/${archive_name}" "${artefact_dir}" >/dev/null
           ls -la release-artefacts
 
       - name: Upload build artefacts
