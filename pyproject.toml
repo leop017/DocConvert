@@ -39,6 +39,7 @@ dependencies = [
 xls = ["xlrd>=2.0.0"]
 doc = ["textract>=1.6.0"]
 all = ["docconvert[xls,doc]"]
+build = ["pyinstaller>=6.0"]
 
 [project.urls]
 Homepage = "https://github.com/leop017/codex"

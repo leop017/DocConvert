@@ -25,6 +25,12 @@ Thanks for your interest in DocConvert!
 - If you change Python sources that feed `doc_convert.py.md`, regenerate the snapshot via `python gen_doc.py` (use `python gen_doc.py --check` to verify it is up to date).
 - Keep the Issue templates (`.github/ISSUE_TEMPLATE/`) usable; do not rename fields silently.
 
+## Releases
+
+- Releases are driven by the `release` workflow (`.github/workflows/release.yml`). Pushing a `v*` tag (or triggering the workflow manually) builds Windows / macOS / Linux executables via PyInstaller and publishes them as GitHub Release assets.
+- Build artefacts are produced by `build_scripts/build_exe.py`; keep that script in sync with `DocConvert.spec` if you change hidden imports or bundled data.
+- Do **not** commit the contents of `dist/`. The `dist/` and `build/` directories stay untracked.
+
 ## Reporting Issues
 
 Use the GitHub issue tracker (under the project repository). Include:

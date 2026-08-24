@@ -130,6 +130,25 @@ main.py         # GUI / CLI entry point
 - Keep `README.md`, `CONTRIBUTING.md`, and `pyproject.toml` in sync when adding new entry points, extras, or CLI flags.
 - Generated sources: regenerate `doc_convert.py.md` via `python gen_doc.py` whenever it changes; otherwise leave it untouched.
 
+## Releases / Executables
+
+End-user releases are produced by GitHub Actions whenever a `v*` tag is pushed (or when the workflow is dispatched manually). Each run builds Windows / macOS / Linux executables via PyInstaller and uploads them to the matching GitHub Release under `https://github.com/leop017/codex/releases`.
+
+To cut a new release:
+
+1. Make sure `main` is green and the version in `pyproject.toml` matches the tag you intend to push.
+2. Tag the commit: `git tag -a vX.Y.Z -m "DocConvert X.Y.Z"` and `git push origin vX.Y.Z`.
+3. The `release` workflow builds the artefacts and creates the GitHub Release automatically.
+
+If you want to build the executable locally:
+
+```bash
+pip install -e ".[all,build]"
+python build_scripts/build_exe.py --clean
+```
+
+The build script writes an output under `dist/DocConvert-<platform>-<arch>/`.
+
 ## License
 
 MIT
