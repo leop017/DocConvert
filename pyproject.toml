@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "docconvert"
+version = "2.0.0"
+description = "Convert Excel and Word documents to HTML, Markdown, and JSON"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["document", "conversion", "excel", "word", "markdown"]
+authors = [
+    { name = "DocConvert Contributors" },
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Office Suites",
+    "Topic :: Text Processing :: Markup :: HTML",
+    "Topic :: Text Processing :: Markup :: Markdown",
+]
+dependencies = [
+    "python-docx>=1.1.0",
+    "openpyxl>=3.1.0",
+    "pandas>=2.0.0",
+    "mammoth>=1.6.0",
+    "beautifulsoup4>=4.12.0",
+    "markdownify>=0.11.0",
+]
+
+[project.optional-dependencies]
+xls = ["xlrd>=2.0.0"]
+doc = ["textract>=1.6.0"]
+all = ["docconvert[xls,doc]"]
+
+[project.urls]
+Homepage = "https://github.com/docconvert/docconvert"
+BugTracker = "https://github.com/docconvert/docconvert/issues"
+
+[project.scripts]
+docconvert = "docconvert.cli:main_cli"
+
+[tool.setuptools.packages.find]
+include = ["docconvert", "docconvert.*"]
+
+[tool.setuptools.package-data]
+docconvert = ["py.typed"]
