@@ -80,6 +80,8 @@ class DocConvertApp:
         req_h = self.root.winfo_reqheight()
         if req_h > 760:
             self.root.geometry(f'780x{req_h + 20}')
+        self.root.update_idletasks()
+        self.root.update_idletasks()
         self.root.protocol('WM_DELETE_WINDOW', self._on_close)
         self.root.after(50, self._poll_pending)
 

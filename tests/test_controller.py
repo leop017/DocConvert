@@ -404,6 +404,8 @@ class TestGuiWindowSizeFitsContent(unittest.TestCase):
             # Two layout passes are required for Text/Listbox to settle
             root.update_idletasks()
             root.update_idletasks()
+            root.update_idletasks()
+            root.update_idletasks()
             req_h = root.winfo_reqheight()
             actual_h = root.winfo_height()
             # Window must be at least as tall as its content requires,
