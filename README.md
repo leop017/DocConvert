@@ -17,12 +17,7 @@ Convert Excel (`.xlsx`/`.xls`) and Word (`.docx`/`.doc`) documents to **HTML**, 
 pip install docconvert
 ```
 
-For legacy `.xls` support:
-```bash
-pip install docconvert[xls]
-```
-
-For legacy `.doc` support:
+For `.doc` support (Linux/macOS only):
 ```bash
 pip install docconvert[doc]
 ```
