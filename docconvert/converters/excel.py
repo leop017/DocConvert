@@ -484,9 +484,11 @@ class ExcelConverter(BaseConverter):
         MD path feeds rows_data directly into the HTML builder,
         where newlines are never escaped by pandas.
         """
-        from bs4 import BeautifulSoup
+        from bs4 import BeautifulSoup, Tag
         soup = BeautifulSoup(html_content, 'html.parser')
         for cell in soup.find_all(['th', 'td']):
+            if not isinstance(cell, Tag):
+                continue
             current = cell.get_text()
             unescaped = current.replace(chr(92) + chr(110), chr(10))
             escaped = escape_md_cell(unescaped)

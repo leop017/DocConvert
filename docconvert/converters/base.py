@@ -25,7 +25,7 @@ class BaseConverter(ABC):
     ) -> tuple[list[tuple[str, str]], list[tuple[str, str]]]:
         ...
 
-    def _export(self, content: str, output_fmt: str) -> str:
+    def _export(self, content: object, output_fmt: str) -> str:
         from docconvert.exporters import get_exporter
         exporter = get_exporter(output_fmt)
         return exporter.export(content)

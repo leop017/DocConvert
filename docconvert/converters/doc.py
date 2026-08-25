@@ -51,6 +51,7 @@ class DocConverter(BaseConverter):
         stem = stem_override or clean_filename(Path(input_path).stem)
         source_name = Path(input_path).name
 
+        content: object = ""
         if output_fmt == 'html':
             content = (
                 f'<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n'

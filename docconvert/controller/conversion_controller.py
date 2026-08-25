@@ -7,6 +7,7 @@ from typing import Callable, Optional
 
 from docconvert.config import AppConfig, DEFAULT_CONFIG
 from docconvert.converters import ExcelConverter, WordConverter, DocConverter
+from docconvert.converters.base import BaseConverter
 from docconvert.logger import get_logger
 from docconvert.models import ProgressEvent
 from docconvert.utils import clean_filename, get_excel_sheet_names
@@ -84,9 +85,9 @@ class ConversionController:
         used.add(candidate)
         return candidate
 
-    def _get_converter(self, ext: str):
+    def _get_converter(self, ext: str) -> BaseConverter:
         if ext in ('.xlsx', '.xls'):
-            c = ExcelConverter(self.config)
+            c: BaseConverter = ExcelConverter(self.config)
         elif ext == '.docx':
             c = WordConverter(self.config)
         elif ext == '.doc':

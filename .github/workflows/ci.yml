@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
@@ -60,6 +64,12 @@ jobs:
           rc=${PIPESTATUS[0]}
           echo "===== exit=$rc =====" | tee -a ci-artifacts/unittest.log
           exit $rc
+
+      - name: Run mypy type check
+        shell: bash
+        run: |
+          pip install mypy
+          mypy docconvert/ --ignore-missing-imports
 
       - name: Upload CI artifacts
         if: always()

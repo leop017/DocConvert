@@ -127,7 +127,7 @@ main.py         # GUI / CLI entry point
 
 ## Releases / Executables
 
-End-user releases are produced by GitHub Actions whenever a `v*` tag is pushed (or when the workflow is dispatched manually). Each run builds Windows / macOS / Linux executables via PyInstaller and uploads them to the matching GitHub Release under `https://github.com/leop017/codex/releases`.
+End-user releases are produced by GitHub Actions whenever a `v*` tag is pushed (or when the workflow is dispatched manually). Each run builds Windows / macOS / Linux executables via PyInstaller and uploads them to the matching GitHub Release under `https://github.com/leop017/DocConvert/releases`.
 
 To cut a new release:
 

@@ -58,7 +58,7 @@ class WordConverter(BaseConverter):
         buf = io.BytesIO()
         doc.save(buf)
         buf.seek(0)
-        content = ""
+        content: object = ""
         paragraph_count = len([p for p in doc.paragraphs if p.text.strip()])
 
         if output_fmt == 'html':
@@ -77,8 +77,8 @@ class WordConverter(BaseConverter):
         return output_name, output_path_full
 
     @staticmethod
-    def _strip_headers_footers(doc: DocxDocument):
-        body_xml = doc.element.body
+    def _strip_headers_footers(doc: object):
+        body_xml = doc.element.body  # type: ignore[attr-defined]
         ns = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
         for sect_pr in body_xml.findall(f'.//{ns}sectPr'):
             for child in list(sect_pr):

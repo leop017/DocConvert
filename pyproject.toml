@@ -37,9 +37,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+test = ["mypy>=1.0", "xlwt"]
 doc = ["textract>=1.6.0; platform_system != 'Windows'"]
 build = ["pyinstaller>=6.0"]
-all = ["docconvert[doc,build]"]
+all = ["docconvert[test,doc,build]"]
 
 [project.urls]
 Homepage = "https://github.com/leop017/DocConvert"

@@ -26,8 +26,8 @@ def setup_logging(level: Union[int, str] = logging.INFO) -> logging.Logger:
         # raise the already-registered handler's level too; setting only
         # the logger's level is not enough, the handler would keep
         # filtering the messages out.
-        for handler in logger.handlers:
-            handler.setLevel(level)
+        for h in logger.handlers:
+            h.setLevel(level)
 
     return logger
 
