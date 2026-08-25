@@ -28,14 +28,35 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           pip install -e .
 
+      - name: Install test dependencies
+        shell: bash
+        run: |
+          # xlwt: required by TestExcelConverterXlsCache to generate .xls fixtures
+          # textract: required by TestDocConverterJsonFormat; only install on Linux
+          pip install xlwt
+          if [ "$RUNNER_OS" != "Windows" ]; then
+            pip install "textract>=1.6.0"
+          fi
+
+      - name: Install Xvfb for GUI tests (Linux only)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+
       - name: Run tests
         shell: bash
         run: |
           mkdir -p ci-artifacts
           python --version 2>&1 | tee ci-artifacts/python-version.txt
           pip list 2>/dev/null | tee ci-artifacts/pip-list.txt || true
-          echo "===== unittest =====" | tee ci-artifacts/unittest.log
-          python -m unittest discover -s tests -v 2>&1 | tee -a ci-artifacts/unittest.log
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            echo "===== Running under xvfb =====" | tee ci-artifacts/unittest.log
+            xvfb-run -a python -m unittest discover -s tests -v 2>&1 | tee -a ci-artifacts/unittest.log
+          else
+            echo "===== Running tests =====" | tee ci-artifacts/unittest.log
+            python -m unittest discover -s tests -v 2>&1 | tee -a ci-artifacts/unittest.log
+          fi
           rc=${PIPESTATUS[0]}
           echo "===== exit=$rc =====" | tee -a ci-artifacts/unittest.log
           exit $rc
