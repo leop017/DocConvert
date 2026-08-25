@@ -31,11 +31,19 @@ jobs:
       - name: Run tests
         shell: bash
         run: |
-          set +e
-          python --version
-          pip list 2>/dev/null | head -n 40
-          echo "===== unittest ====="
-          python -m unittest discover -s tests -v 2>&1 | tail -n 200
+          mkdir -p ci-artifacts
+          python --version 2>&1 | tee ci-artifacts/python-version.txt
+          pip list 2>/dev/null | tee ci-artifacts/pip-list.txt || true
+          echo "===== unittest =====" | tee ci-artifacts/unittest.log
+          python -m unittest discover -s tests -v 2>&1 | tee -a ci-artifacts/unittest.log
           rc=${PIPESTATUS[0]}
-          echo "===== unittest exit=$rc ====="
+          echo "===== exit=$rc =====" | tee -a ci-artifacts/unittest.log
           exit $rc
+
+      - name: Upload CI artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-logs-${{ matrix.os }}-${{ matrix.python-version }}
+          path: ci-artifacts/
+          if-no-files-found: ignore
