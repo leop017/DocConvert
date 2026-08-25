@@ -396,52 +396,35 @@ class TestGuiWindowSizeFitsContent(unittest.TestCase):
 
     def test_window_grows_to_fit_content(self):
         import tkinter as tk
-        from tkinter import ttk
         from docconvert.gui.app import DocConvertApp
 
         root = tk.Tk()
+        app = None
         try:
-            DocConvertApp(root)
-            # Two layout passes are required for Text/Listbox to settle
+            app = DocConvertApp(root)
             root.update_idletasks()
             root.update_idletasks()
             root.update_idletasks()
-            root.update_idletasks()
-            # Find the "开始转换" button in the bottom bar
-            btn = None
-            for child in root.winfo_children():
-                if isinstance(child, ttk.Frame):
-                    for sub in child.winfo_children():
-                        if isinstance(sub, ttk.Frame):
-                            for ssub in sub.winfo_children():
-                                if isinstance(ssub, ttk.Button):
-                                    btn = ssub
-                                    break
-                            if btn:
-                                break
-                        elif isinstance(sub, ttk.Button):
-                            btn = sub
-                            break
-                    if btn:
-                        break
-            req_h = root.winfo_reqheight()
             actual_h = root.winfo_height()
-            # On some headless / remote-display CI runners winfo_height() may
-            # return the client-area height instead of the full window height.
-            # We verify the bottom bar fits by checking the button position.
-            if btn is not None:
-                btn_y = btn.winfo_y()
-                btn_h = btn.winfo_height()
-                self.assertLessEqual(
-                    btn_y + btn_h, actual_h,
-                    f"Convert button bottom ({btn_y + btn_h}) extends past window height ({actual_h})",
-                )
-            else:
-                # Fallback: window must be at least as tall as content minus frame
-                self.assertGreaterEqual(
-                    actual_h, req_h - 30,
-                    f"Window height {actual_h} too small (content requires {req_h}); bottom bar would be clipped",
-                )
+            # convert_btn is the "开始转换" button in the bottom bar.
+            # On headless / remote-display CI runners winfo_height() may
+            # return the client-area height (missing title bar + borders),
+            # so we check two things:
+            # 1. The button fits inside the client area.
+            # 2. The window is at least tall enough for the content minus
+            #    a generous tolerance for frame decorations (~130 px on Windows).
+            btn = app.convert_btn
+            btn_y = btn.winfo_y()
+            btn_h = btn.winfo_height()
+            self.assertLessEqual(
+                btn_y + btn_h, actual_h,
+                f"Convert button bottom ({btn_y + btn_h}) extends past window height ({actual_h})",
+            )
+            req_h = root.winfo_reqheight()
+            self.assertGreaterEqual(
+                actual_h, req_h - 150,
+                f"Window height {actual_h} too small (content requires {req_h}); bottom bar would be clipped",
+            )
         finally:
             root.destroy()
 
