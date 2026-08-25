@@ -42,8 +42,8 @@ build = ["pyinstaller>=6.0"]
 all = ["docconvert[doc,build]"]
 
 [project.urls]
-Homepage = "https://github.com/leop017/codex"
-BugTracker = "https://github.com/leop017/codex/issues"
+Homepage = "https://github.com/leop017/DocConvert"
+BugTracker = "https://github.com/leop017/DocConvert/issues"
 
 [project.scripts]
 docconvert = "docconvert.cli:main_cli"
