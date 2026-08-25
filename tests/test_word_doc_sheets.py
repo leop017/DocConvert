@@ -68,6 +68,10 @@ class TestDocConverterJsonFormat(unittest.TestCase):
         self.out_dir = Path(self.tmp.name) / "out"
         self.out_dir.mkdir()
 
+    @unittest.skipUnless(
+        __import__("importlib").util.find_spec("textract") is not None,
+        "textract not installed (Linux/macOS only)",
+    )
     def test_json_output_is_pretty_printed(self):
         import json
         from unittest.mock import patch

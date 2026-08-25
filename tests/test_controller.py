@@ -405,7 +405,7 @@ class TestGuiWindowSizeFitsContent(unittest.TestCase):
             root.update_idletasks()
             root.update_idletasks()
             req_h = root.winfo_reqheight()
-            actual_h = int(root.geometry().split('x')[1].split('+')[0])
+            actual_h = root.winfo_height()
             # Window must be at least as tall as its content requires,
             # otherwise the bottom bar is clipped.
             self.assertGreaterEqual(
