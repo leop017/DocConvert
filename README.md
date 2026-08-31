@@ -1,15 +1,36 @@
 # DocConvert
 
-Convert Excel (`.xlsx`/`.xls`) and Word (`.docx`/`.doc`) documents to **HTML**, **Markdown**, and **JSON** — with full merged-cell support for spreadsheets and a multi-stage cleaning pipeline for Word output.
+> Convert `.xlsx` / `.xls` / `.docx` / `.doc` → HTML, Markdown, JSON — locally, no cloud upload, no API key.
+
+[![PyPI version](https://img.shields.io/pypi/v/docconvert.svg)](https://pypi.org/project/docconvert/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
+[![Build](https://github.com/leop017/DocConvert/actions/workflows/ci.yml/badge.svg)](https://github.com/leop017/DocConvert/actions)
+[![Downloads](https://static.pepy.tech/badge/docconvert/month)](https://pepy.tech/project/docconvert)
+[![Stars](https://img.shields.io/github/stars/leop017/DocConvert?style=social)](https://github.com/leop017/DocConvert/stargazers)
+
+## Why DocConvert
+
+| Feature | DocConvert | Online converters | Pandas + python-docx |
+|---|:---:|:---:|:---:|
+| Converts `.doc` (legacy Word) | ✅ | ⚠️ Partial | ❌ |
+| Merged-cell support in Excel | ✅ | ⚠️ Breaks often | ✅ Manual |
+| Markdown output with cleaning pipeline | ✅ Configurable | ❌ Raw HTML | ❌ |
+| Desktop GUI (no terminal needed) | ✅ | N/A | ❌ |
+| Works offline — no data leaves your machine | ✅ | ❌ Upload required | ✅ |
+| Batch convert multiple files at once | ✅ | ⚠️ Limited | ❌ |
+
+**Zero configuration. No account. Your files never leave your computer.**
 
 ## Features
 
-- **Excel** — Sheet selection, merged cells (rowspan/colspan), HTML/Markdown/JSON output
-- **Word** — `.docx` via `python-docx` + `mammoth`, `.doc` via `textract`
-- **Markdown cleaning** — Remove page numbers, duplicate headers, collapse blank lines, normalize whitespace (all configurable)
-- **GUI** — Tkinter-based file list, preview, progress bar, overwrite confirmation
-- **CLI** — Batch conversion with argparse
-- **Async** — Non-blocking background thread; cancel via window close
+- **Excel** — Sheet selection, merged cells (rowspan/colspan), HTML / Markdown / JSON
+- **Word** — `.docx` via `python-docx` + `mammoth`, legacy `.doc` via `textract`
+- **Smart Markdown** — Removes page numbers, duplicate headers, collapses blank lines; all rules configurable
+- **GUI** — Tkinter desktop app with file list, preview, progress bar, overwrite protection
+- **CLI** — One-line batch conversion via argparse
+- **Python API** — Programmatic control with full type hints
+- **Executable releases** — Download a standalone `.exe` for Windows / macOS / Linux, no Python install needed
 
 ## Installation
 
@@ -17,37 +38,37 @@ Convert Excel (`.xlsx`/`.xls`) and Word (`.docx`/`.doc`) documents to **HTML**, 
 pip install docconvert
 ```
 
-For `.doc` support (Linux/macOS only):
-```bash
-pip install docconvert[doc]
-```
+Optional extras:
 
-All extras:
 ```bash
+# Legacy .doc support (Linux / macOS only)
+pip install docconvert[doc]
+
+# Full feature set including build tools
 pip install docconvert[all]
 ```
 
 ## Quick Start
 
-### GUI
+### GUI (interactive)
 
 ```bash
 python main.py
 ```
 
-### CLI
+### CLI (batch / scripting)
 
 ```bash
-# Convert a single file
+# Single file → Markdown
 python main.py convert input.xlsx --format md
 
-# Convert multiple files
+# Multiple files → HTML into output/
 python main.py convert file1.xlsx file2.docx --format html -o ./output
 
-# Enhanced Markdown output
+# Enhanced Markdown (cleaning pipeline)
 python main.py convert input.docx --format md --enhanced
 
-# Select specific Excel sheets
+# Pick specific Excel sheets → JSON
 python main.py convert input.xlsx --format json --sheet "Sheet1" --sheet "Sheet2"
 ```
 
@@ -58,30 +79,48 @@ from docconvert.controller import ConversionController
 
 controller = ConversionController()
 results = controller.convert_files(
-    files=["input.xlsx"],
+    files=["input.xlsx", "report.docx"],
     output_fmt="html",
     enhanced_md=True,
 )
 
 for name, path, error in results:
     if error:
-        print(f"Failed: {name} - {error}")
+        print(f"Failed: {name} – {error}")
     else:
-        print(f"Success: {name} -> {path}")
+        print(f"OK: {name} → {path}")
 ```
 
-## Supported Formats
+## Output Preview
 
-| Input       | HTML | Markdown | JSON |
-|-------------|------|----------|------|
-| `.xlsx`     | ✅   | ✅       | ✅   |
-| `.xls`      | ✅   | ✅       | ✅   |
-| `.docx`     | ✅   | ✅       | ✅   |
-| `.doc`      | ✅   | ✅       | ✅   |
+**Input** — an Excel sheet with merged cells:
+
+| Region | Q1 | Q2 |
+|:---:|:---:|:---:|
+| **North** | 120 | 150 |
+| **South** | 90 | 200 |
+
+→ **Markdown output** (auto-cleaned):
+
+```markdown
+## Region    Q1    Q2
+North       120   150
+South        90   200
+```
+
+→ **JSON output**:
+
+```json
+{
+  "Region": ["North", "South"],
+  "Q1": [120, 90],
+  "Q2": [150, 200]
+}
+```
 
 ## Configuration
 
-Cleaning rules can be toggled via `AppConfig`:
+Toggle Markdown cleaning rules via `AppConfig`:
 
 ```python
 from docconvert.config import AppConfig
@@ -96,53 +135,27 @@ config = AppConfig(
 )
 ```
 
-## Testing
+## Releases (no Python needed)
 
-```bash
-pip install -e ".[all]"
-python -m unittest discover -s tests -v
-```
-
-All tests pass under `unittest discover`.
+Standalone executables for Windows, macOS, and Linux are built automatically on each tag push. Download them from [Releases](https://github.com/leop017/DocConvert/releases).
 
 ## Project Layout
 
-```text
+```
 docconvert/
-  converters/   # excel / word / doc readers
-  cleaners/     # Word/Markdown cleaning pipeline
-  exporters/    # html / markdown / json exporters
-  controller/   # orchestration, async/cancel, overwrite checks
-  gui/          # Tkinter application
-  parsers/, chunkers/  # reserved extension points
-tests/          # unittest suite (mirrors the package layout)
-main.py         # GUI / CLI entry point
+  converters/     # Excel / Word / .doc readers
+  cleaners/       # Markdown cleaning pipeline
+  exporters/      # HTML / Markdown / JSON output
+  controller/     # Orchestration, async, overwrite checks
+  gui/            # Tkinter desktop app
+  parsers/, chunkers/  # Extension points
+tests/
+main.py           # GUI / CLI entry point
 ```
 
-## Maintenance
+## Contributing
 
-- Run the full test suite before opening a PR (see Testing above).
-- Keep `README.md`, `CONTRIBUTING.md`, and `pyproject.toml` in sync when adding new entry points, extras, or CLI flags.
-- Generated sources: regenerate `doc_convert.py.md` via `python gen_doc.py` whenever it changes; otherwise leave it untouched.
-
-## Releases / Executables
-
-End-user releases are produced by GitHub Actions whenever a `v*` tag is pushed (or when the workflow is dispatched manually). Each run builds Windows / macOS / Linux executables via PyInstaller and uploads them to the matching GitHub Release under `https://github.com/leop017/DocConvert/releases`.
-
-To cut a new release:
-
-1. Make sure `main` is green and the version in `pyproject.toml` matches the tag you intend to push.
-2. Tag the commit: `git tag -a vX.Y.Z -m "DocConvert X.Y.Z"` and `git push origin vX.Y.Z`.
-3. The `release` workflow builds the artefacts and creates the GitHub Release automatically.
-
-If you want to build the executable locally:
-
-```bash
-pip install -e ".[all,build]"
-python build_scripts/build_exe.py --clean
-```
-
-The build script writes an output under `dist/DocConvert-<platform>-<arch>/`.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
