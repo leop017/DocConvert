@@ -123,13 +123,13 @@ jobs:
           fi
           echo "Publishing version: $VERSION"
           python -c "
-  import re
-  p = 'pyproject.toml'
-  s = open(p).read()
-  s = re.sub(r'^version = \".*\"', f'version = \"{VERSION}\"', s, count=1, flags=re.M)
-  open(p, 'w').write(s)
-  print(f'Updated pyproject.toml → version = \"{VERSION}\"')
-  "
+import re
+p = 'pyproject.toml'
+s = open(p).read()
+s = re.sub(r'^version = \".*\"', f'version = \"{VERSION}\"', s, count=1, flags=re.M)
+open(p, 'w').write(s)
+print(f'Updated pyproject.toml -> version = \"{VERSION}\"')
+"
 
       - name: Build package
         run: python -m build
