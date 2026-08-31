@@ -41,7 +41,7 @@ DocConvert was built for people who feed documents into LLMs and need every toke
 ## Installation
 
 ```bash
-pip install docconvert
+pip install docconvert-local
 ```
 
 Optional extras:
@@ -51,7 +51,7 @@ Optional extras:
 pip install docconvert[doc]
 
 # Full feature set including build tools
-pip install docconvert[all]
+pip install docconvert-local[all]
 ```
 
 ## Quick Start

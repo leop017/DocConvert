@@ -3,7 +3,7 @@ requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "docconvert"
+name = "docconvert-local"
 version = "2.0.0"
 description = "Clean Excel & Word → Markdown for RAG pipelines. Works 100% offline — no API keys, no cloud upload."
 readme = "README.md"
@@ -40,7 +40,7 @@ dependencies = [
 test = ["mypy>=1.0", "xlwt"]
 doc = ["textract>=1.6.0; platform_system != 'Windows'"]
 build = ["pyinstaller>=6.0"]
-all = ["docconvert[test,doc,build]"]
+all = ["docconvert-local[test,doc,build]"]
 
 [project.urls]
 Homepage = "https://github.com/leop017/DocConvert"
