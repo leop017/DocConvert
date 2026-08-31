@@ -1,6 +1,7 @@
 # DocConvert
 
-> Convert `.xlsx` / `.xls` / `.docx` / `.doc` → HTML, Markdown, JSON — locally, no cloud upload, no API key.
+> Clean Markdown & structured data from Excel & Word — built for RAG pipelines and LLM workflows.
+> Works 100% offline. No API keys. No data leaves your machine.
 
 [![PyPI version](https://img.shields.io/pypi/v/docconvert.svg)](https://pypi.org/project/docconvert/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -11,26 +12,31 @@
 
 ## Why DocConvert
 
-| Feature | DocConvert | Online converters | Pandas + python-docx |
+Most document-to-Markdown tools convert the file — they don't **clean** it. Raw outputs are full of page numbers, duplicate headers, and whitespace noise that eats your context window and dilutes retrieval quality.
+
+DocConvert was built for people who feed documents into LLMs and need every token to count.
+
+| Feature | DocConvert | MarkItDown | Pandas + python-docx |
 |---|:---:|:---:|:---:|
-| Converts `.doc` (legacy Word) | ✅ | ⚠️ Partial | ❌ |
-| Merged-cell support in Excel | ✅ | ⚠️ Breaks often | ✅ Manual |
-| Markdown output with cleaning pipeline | ✅ Configurable | ❌ Raw HTML | ❌ |
-| Desktop GUI (no terminal needed) | ✅ | N/A | ❌ |
-| Works offline — no data leaves your machine | ✅ | ❌ Upload required | ✅ |
-| Batch convert multiple files at once | ✅ | ⚠️ Limited | ❌ |
+| Legacy `.doc` support | ✅ | ❌ | ❌ |
+| Excel merged cells (rowspan/colspan) | ✅ | ⚠️ | Manual |
+| Configurable cleaning pipeline | ✅ 4 rules, toggle any | ❌ | ❌ |
+| Batch + specific sheet selection | ✅ | ✅ | ❌ |
+| Desktop GUI (no terminal needed) | ✅ | ❌ | ❌ |
+| PDF / PPT / audio support | ❌ | ✅ | ❌ |
+| MCP server / Claude integration | ❌ | ✅ | ❌ |
+| 100% offline, no cloud dependency | ✅ | ✅ | ✅ |
 
-**Zero configuration. No account. Your files never leave your computer.**
+**Choose DocConvert if:** you work with Excel/Word documents inside an organization, need legacy `.doc` support, or want a configurable cleaning pipeline before feeding docs into a RAG system.
 
-## Features
+**Choose MarkItDown if:** you need PDF, PPT, images, or audio conversion, or want MCP/Claude Desktop integration out of the box.
 
-- **Excel** — Sheet selection, merged cells (rowspan/colspan), HTML / Markdown / JSON
-- **Word** — `.docx` via `python-docx` + `mammoth`, legacy `.doc` via `textract`
-- **Smart Markdown** — Removes page numbers, duplicate headers, collapses blank lines; all rules configurable
-- **GUI** — Tkinter desktop app with file list, preview, progress bar, overwrite protection
-- **CLI** — One-line batch conversion via argparse
-- **Python API** — Programmatic control with full type hints
-- **Executable releases** — Download a standalone `.exe` for Windows / macOS / Linux, no Python install needed
+## Use Cases
+
+- **RAG ingestion** — clean Excel financial reports and Word contracts into Markdown ready for embedding
+- **LLM context prep** — strip page numbers, duplicates, and noise before chunking
+- **Offline compliance** — convert sensitive documents without uploading to any cloud service
+- **Batch automation** — convert entire folders of reports into a structured directory
 
 ## Installation
 
@@ -59,14 +65,14 @@ python main.py
 ### CLI (batch / scripting)
 
 ```bash
-# Single file → Markdown
+# Single file → clean Markdown
 python main.py convert input.xlsx --format md
+
+# Batch convert with enhanced cleaning (recommended for RAG)
+python main.py convert input.docx --format md --enhanced
 
 # Multiple files → HTML into output/
 python main.py convert file1.xlsx file2.docx --format html -o ./output
-
-# Enhanced Markdown (cleaning pipeline)
-python main.py convert input.docx --format md --enhanced
 
 # Pick specific Excel sheets → JSON
 python main.py convert input.xlsx --format json --sheet "Sheet1" --sheet "Sheet2"
@@ -80,7 +86,7 @@ from docconvert.controller import ConversionController
 controller = ConversionController()
 results = controller.convert_files(
     files=["input.xlsx", "report.docx"],
-    output_fmt="html",
+    output_fmt="md",
     enhanced_md=True,
 )
 
@@ -89,6 +95,29 @@ for name, path, error in results:
         print(f"Failed: {name} – {error}")
     else:
         print(f"OK: {name} → {path}")
+```
+
+### RAG Pipeline Integration
+
+```python
+from docconvert.controller import ConversionController
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+# Convert and clean
+controller = ConversionController()
+docs = []
+for name, path, error in controller.convert_files(
+    files=["contracts/*.docx"],
+    output_fmt="md",
+    enhanced_md=True,
+):
+    if not error:
+        with open(path) as f:
+            docs.append(f.read())
+
+# Chunk and embed — noise already removed
+splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+chunks = splitter.split_text("\n".join(docs))
 ```
 
 ## Output Preview
@@ -118,22 +147,34 @@ South        90   200
 }
 ```
 
-## Configuration
+## Smart Cleaning Pipeline
 
-Toggle Markdown cleaning rules via `AppConfig`:
+The `--enhanced` flag runs a configurable cleaning pass that removes common document noise before output. Each rule is independently toggleable:
 
 ```python
 from docconvert.config import AppConfig
 
 config = AppConfig(
     cleaning_rules={
-        "remove_page_numbers": True,
-        "remove_duplicate_headers": True,
-        "remove_empty_lines": True,
-        "normalize_spaces": True,
+        "remove_page_numbers": True,    # strips 1, 2, 3… and "Page X of Y"
+        "remove_duplicate_headers": True,  # deduplicates repeating section titles
+        "remove_empty_lines": True,     # collapses excessive blank lines
+        "normalize_spaces": True,       # single-spaces text, preserves tables
     }
 )
 ```
+
+All four rules are enabled by default with `--enhanced`. Set any to `False` to keep the raw output.
+
+## Features
+
+- **Excel** — Sheet selection, merged cells (rowspan/colspan), HTML / Markdown / JSON
+- **Word** — `.docx` via `python-docx` + `mammoth`, legacy `.doc` via `textract`
+- **Smart Markdown** — Removes page numbers, duplicate headers, collapses blank lines; all rules configurable
+- **GUI** — Tkinter desktop app with file list, preview, progress bar, overwrite protection
+- **CLI** — One-line batch conversion via argparse
+- **Python API** — Programmatic control with full type hints
+- **Executable releases** — Download a standalone `.exe` for Windows / macOS / Linux, no Python install needed
 
 ## Releases (no Python needed)
 
