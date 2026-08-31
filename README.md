@@ -7,7 +7,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 [![Build](https://github.com/leop017/DocConvert/actions/workflows/ci.yml/badge.svg)](https://github.com/leop017/DocConvert/actions)
-[![Downloads](https://img.shields.io/pypi/dm/docconvert-local.svg)](https://pypi.org/project/docconvert-local/)
 [![Stars](https://img.shields.io/github/stars/leop017/DocConvert?style=social)](https://github.com/leop017/DocConvert/stargazers)
 
 ## Why DocConvert
