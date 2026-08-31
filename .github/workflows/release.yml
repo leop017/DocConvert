@@ -94,3 +94,30 @@ jobs:
           generate_release_notes: true
           files: |
             artefacts/**
+
+  pypi-publish:
+    name: publish to PyPI
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install build tools
+        run: pip install build twine
+
+      - name: Build package
+        run: python -m build
+
+      - name: Publish to PyPI
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: twine upload --username __token__ --password "$PYPI_TOKEN" dist/*
