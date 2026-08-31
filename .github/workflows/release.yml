@@ -86,12 +86,31 @@ jobs:
         with:
           path: artefacts
 
+      - name: Generate release body from CHANGELOG
+        id: changelog
+        shell: bash
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          BODY=$(awk -v tag="$TAG" '
+            /^## \[/'"$TAG"'\]/ {found=1; next}
+            /^## \[/ {found=0}
+            found {print}
+          ' CHANGELOG.md)
+          # Add full changelog link
+          BODY="${BODY}
+
+---
+
+**Full Changelog**: https://github.com/leop017/DocConvert/compare/${TAG}...HEAD"
+          printf '%s' "$BODY" > "$GITHUB_OUTPUT"
+          echo "Release body generated (length: ${#BODY})"
+
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
           name: DocConvert ${{ steps.tag.outputs.tag }}
-          generate_release_notes: true
+          body: ${{ steps.changelog.outputs.body }}
           files: |
             artefacts/**
 
