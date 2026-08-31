@@ -31,45 +31,45 @@ class _HelpFormatter(argparse.HelpFormatter):
 
 def main_cli(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description='DocConvert - 文档转换工具 (CLI)',
+        description='DocConvert — convert Excel & Word documents to clean Markdown, HTML, or JSON.',
         formatter_class=_HelpFormatter,
         epilog=(
-            '示例:\n'
+            'Examples:\n'
             '  python main.py convert input.xlsx --format md\n'
             '  python main.py convert input.docx --format html -o ./output\n'
             '  python main.py convert file1.xlsx file2.xlsx --format json\n'
         ),
     )
 
-    subparsers = parser.add_subparsers(dest='command', help='子命令')
+    subparsers = parser.add_subparsers(dest='command', help='Command to run')
 
-    convert_parser = subparsers.add_parser('convert', help='转换文件')
-    convert_parser.add_argument('files', nargs='+', help='输入文件路径')
+    convert_parser = subparsers.add_parser('convert', help='Convert one or more files')
+    convert_parser.add_argument('files', nargs='+', help='Input file paths')
     convert_parser.add_argument(
         '--format', '-f',
         choices=['html', 'md', 'json'],
         default='html',
-        help='输出格式 （默认： html)',
+        help='Output format (default: html)',
     )
     convert_parser.add_argument(
         '--output', '-o',
         default=None,
-        help='输出目录 （默认： 输入文件所在目录）',
+        help='Output directory (default: same as input file)',
     )
     convert_parser.add_argument(
         '--enhanced', '-e',
         action='store_true',
-        help='启用增强 Markdown 输出',
+        help='Enable enhanced Markdown cleaning (remove page numbers, duplicate headers, etc.)',
     )
     convert_parser.add_argument(
         '--sheet', '-s',
         action='append',
-        help='指定 Excel 工作表 （可重复使用， 默认： 全部）',
+        help='Select Excel sheet(s) (repeatable; default: all sheets)',
     )
     convert_parser.add_argument(
         '--verbose', '-v',
         action='store_true',
-        help='详细日志输出',
+        help='Enable verbose debug logging',
     )
 
     args = parser.parse_args(argv)
@@ -88,15 +88,15 @@ def main_cli(argv: list[str] | None = None) -> int:
     for filepath in args.files:
         p = Path(filepath)
         if not p.exists():
-            print(f'错误： 文件不存在 - {filepath}', file=sys.stderr)
-            all_results.append((p.name, '', '文件不存在'))
+            print(f'Error: file not found — {filepath}', file=sys.stderr)
+            all_results.append((p.name, '', 'File not found'))
             failed += 1
             continue
 
         ext = p.suffix.lower()
         if ext not in {'.xlsx', '.xls', '.docx', '.doc'}:
-            print(f'错误： 不支持的文件格式 - {filepath}', file=sys.stderr)
-            all_results.append((p.name, '', '不支持的文件格式'))
+            print(f'Error: unsupported format — {filepath}', file=sys.stderr)
+            all_results.append((p.name, '', 'Unsupported format'))
             failed += 1
             continue
 
@@ -113,19 +113,19 @@ def main_cli(argv: list[str] | None = None) -> int:
                 all_results.append((name, path, err))
                 if err:
                     failed += 1
-                    print(f'失败： {name} - {err}', file=sys.stderr)
+                    print(f'Failed: {name} — {err}', file=sys.stderr)
                 else:
-                    print(f'成功： {name} -> {path}')
+                    print(f'OK: {name} -> {path}')
         except Exception as e:
-            print(f'错误： {filepath} - {e}', file=sys.stderr)
+            print(f'Error: {filepath} — {e}', file=sys.stderr)
             all_results.append((p.name, '', str(e)))
             failed += 1
 
     if failed:
-        print(f'\n处理完成： {len(all_results)} 个文件， {failed} 个失败')
+        print(f'\nDone: {len(all_results)} file(s), {failed} failed')
         return 1
 
-    print(f'\n处理完成： {len(all_results)} 个文件， 全部成功')
+    print(f'\nDone: {len(all_results)} file(s), all succeeded')
     return 0
 
 
