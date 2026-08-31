@@ -48,7 +48,7 @@ Optional extras:
 
 ```bash
 # Legacy .doc support (Linux / macOS only)
-pip install docconvert[doc]
+pip install docconvert-local[doc]
 
 # Full feature set including build tools
 pip install docconvert-local[all]
