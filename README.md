@@ -3,11 +3,11 @@
 > Clean Markdown & structured data from Excel & Word — built for RAG pipelines and LLM workflows.
 > Works 100% offline. No API keys. No data leaves your machine.
 
-[![PyPI version](https://img.shields.io/pypi/v/docconvert.svg)](https://pypi.org/project/docconvert/)
+[![PyPI version](https://img.shields.io/pypi/v/docconvert-local.svg)](https://pypi.org/project/docconvert-local/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 [![Build](https://github.com/leop017/DocConvert/actions/workflows/ci.yml/badge.svg)](https://github.com/leop017/DocConvert/actions)
-[![Downloads](https://static.pepy.tech/badge/docconvert/month)](https://pepy.tech/project/docconvert)
+[![Downloads](https://static.pepy.tech/badge/docconvert-local/month)](https://pepy.tech/project/docconvert-local)
 [![Stars](https://img.shields.io/github/stars/leop017/DocConvert?style=social)](https://github.com/leop017/DocConvert/stargazers)
 
 ## Why DocConvert
@@ -16,16 +16,16 @@ Most document-to-Markdown tools convert the file — they don't **clean** it. Ra
 
 DocConvert was built for people who feed documents into LLMs and need every token to count.
 
-| Feature | DocConvert | MarkItDown | Pandas + python-docx |
-|---|:---:|:---:|:---:|
-| Legacy `.doc` support | ✅ | ❌ | ❌ |
-| Excel merged cells (rowspan/colspan) | ✅ | ⚠️ | Manual |
-| Configurable cleaning pipeline | ✅ 4 rules, toggle any | ❌ | ❌ |
-| Batch + specific sheet selection | ✅ | ✅ | ❌ |
-| Desktop GUI (no terminal needed) | ✅ | ❌ | ❌ |
-| PDF / PPT / audio support | ❌ | ✅ | ❌ |
-| MCP server / Claude integration | ❌ | ✅ | ❌ |
-| 100% offline, no cloud dependency | ✅ | ✅ | ✅ |
+| Feature                              |       DocConvert      | MarkItDown | Pandas + python-docx |
+| ------------------------------------ | :-------------------: | :--------: | :------------------: |
+| Legacy `.doc` support                |           ✅           |      ❌     |           ❌          |
+| Excel merged cells (rowspan/colspan) |           ✅           |     ⚠️     |        Manual        |
+| Configurable cleaning pipeline       | ✅ 4 rules, toggle any |      ❌     |           ❌          |
+| Batch + specific sheet selection     |           ✅           |      ✅     |           ❌          |
+| Desktop GUI (no terminal needed)     |           ✅           |      ❌     |           ❌          |
+| PDF / PPT / audio support            |           ❌           |      ✅     |           ❌          |
+| MCP server / Claude integration      |           ❌           |      ✅     |           ❌          |
+| 100% offline, no cloud dependency    |           ✅           |      ✅     |           ✅          |
 
 **Choose DocConvert if:** you work with Excel/Word documents inside an organization, need legacy `.doc` support, or want a configurable cleaning pipeline before feeding docs into a RAG system.
 
@@ -33,10 +33,13 @@ DocConvert was built for people who feed documents into LLMs and need every toke
 
 ## Use Cases
 
-- **RAG ingestion** — clean Excel financial reports and Word contracts into Markdown ready for embedding
-- **LLM context prep** — strip page numbers, duplicates, and noise before chunking
-- **Offline compliance** — convert sensitive documents without uploading to any cloud service
-- **Batch automation** — convert entire folders of reports into a structured directory
+* **RAG ingestion** — clean Excel financial reports and Word contracts into Markdown ready for embedding
+
+* **LLM context prep** — strip page numbers, duplicates, and noise before chunking
+
+* **Offline compliance** — convert sensitive documents without uploading to any cloud service
+
+* **Batch automation** — convert entire folders of reports into a structured directory
 
 ## Installation
 
@@ -124,10 +127,10 @@ chunks = splitter.split_text("\n".join(docs))
 
 **Input** — an Excel sheet with merged cells:
 
-| Region | Q1 | Q2 |
-|:---:|:---:|:---:|
+|   Region  |  Q1 |  Q2 |
+| :-------: | :-: | :-: |
 | **North** | 120 | 150 |
-| **South** | 90 | 200 |
+| **South** |  90 | 200 |
 
 → **Markdown output** (auto-cleaned):
 
@@ -168,13 +171,19 @@ All four rules are enabled by default with `--enhanced`. Set any to `False` to k
 
 ## Features
 
-- **Excel** — Sheet selection, merged cells (rowspan/colspan), HTML / Markdown / JSON
-- **Word** — `.docx` via `python-docx` + `mammoth`, legacy `.doc` via `textract`
-- **Smart Markdown** — Removes page numbers, duplicate headers, collapses blank lines; all rules configurable
-- **GUI** — Tkinter desktop app with file list, preview, progress bar, overwrite protection
-- **CLI** — One-line batch conversion via argparse
-- **Python API** — Programmatic control with full type hints
-- **Executable releases** — Download a standalone `.exe` for Windows / macOS / Linux, no Python install needed
+* **Excel** — Sheet selection, merged cells (rowspan/colspan), HTML / Markdown / JSON
+
+* **Word** — `.docx` via `python-docx` + `mammoth`, legacy `.doc` via `textract`
+
+* **Smart Markdown** — Removes page numbers, duplicate headers, collapses blank lines; all rules configurable
+
+* **GUI** — Tkinter desktop app with file list, preview, progress bar, overwrite protection
+
+* **CLI** — One-line batch conversion via argparse
+
+* **Python API** — Programmatic control with full type hints
+
+* **Executable releases** — Download a standalone `.exe` for Windows / macOS / Linux, no Python install needed
 
 ## Releases (no Python needed)
 
