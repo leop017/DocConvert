@@ -93,18 +93,10 @@ jobs:
         shell: bash
         run: |
           TAG="${{ steps.tag.outputs.tag }}"
-          BODY=$(awk -v tag="$TAG" '
-            /^## \[/'"$TAG"'\]/ {found=1; next}
-            /^## \[/ {found=0}
-            found {print}
-          ' CHANGELOG.md)
-          # Add full changelog link
-          BODY="${BODY}
-
----
-
-**Full Changelog**: https://github.com/leop017/DocConvert/compare/${TAG}...HEAD"
-          printf '%s' "$BODY" > "$GITHUB_OUTPUT"
+          BODY=$(python build_scripts/mkrelease_body.py "$TAG")
+          echo "body<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$BODY" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
           echo "Release body generated (length: ${#BODY})"
 
       - name: Create GitHub release
