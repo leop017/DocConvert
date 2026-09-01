@@ -144,6 +144,7 @@ jobs:
           fi
           echo "Publishing version: $VERSION"
           VERSION="$VERSION" python -c "import os,re; p='pyproject.toml'; s=open(p).read(); v=os.environ['VERSION']; s=re.sub(r'^version = \".*\"', f'version = \"{v}\"', s, count=1, flags=re.M); open(p,'w').write(s); print('Updated',p,'-> version =',v)"
+          VERSION="$VERSION" python -c "import os,re; p='docconvert/__version__.py'; s=open(p).read(); v=os.environ['VERSION']; s=re.sub(r'^__version__ = \".*\"', f'__version__ = \"{v}\"', s, count=1, flags=re.M); open(p,'w').write(s); print('Updated',p,'-> __version__ =',v)"
 
       - name: Build package
         run: python -m build

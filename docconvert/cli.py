@@ -6,6 +6,7 @@ from pathlib import Path
 
 from docconvert.config import DEFAULT_CONFIG
 from docconvert.controller import ConversionController
+from docconvert.__version__ import __version__
 from docconvert.logger import setup_logging
 from docconvert.models import ProgressEvent
 
@@ -66,7 +67,12 @@ def main_cli(argv: list[str] | None = None) -> int:
         action='append',
         help='Select Excel sheet(s) (repeatable; default: all sheets)',
     )
-    convert_parser.add_argument(
+    parser.add_argument(
+        '--version',
+        action='version',
+        version=f'DocConvert {__version__}',
+    )
+    parser.add_argument(
         '--verbose', '-v',
         action='store_true',
         help='Enable verbose debug logging',

@@ -11,6 +11,7 @@ from docx import Document as DocxDocument
 
 from docconvert.config import DEFAULT_CONFIG, AppConfig
 from docconvert.controller import ConversionController
+from docconvert.__version__ import __version__
 from docconvert.logger import get_logger
 from docconvert.models import ProgressEvent
 from docconvert.utils import decode_text, get_excel_sheet_names
@@ -334,7 +335,7 @@ class DocConvertApp:
         messagebox.showinfo('使用说明', help_text)
 
     def _show_about(self):
-        messagebox.showinfo('关于', 'DocConvert v2.0\n\n文档转换工具\n支持 Excel/Word 格式转 HTML/Markdown/JSON')
+        messagebox.showinfo('关于', f'DocConvert v{__version__}\n\n文档转换工具\n支持 Excel/Word 格式转 HTML/Markdown/JSON')
 
     def _create_widgets(self):
         # ── Title bar ──
@@ -343,7 +344,7 @@ class DocConvertApp:
         title_inner = ttk.Frame(title_bar, style='TitleBar.TFrame')
         title_inner.pack(padx=20, pady=(14, 12), anchor=tk.W)
         ttk.Label(title_inner, text='DocConvert', style='AppTitle.TLabel').pack(side=tk.LEFT)
-        ttk.Label(title_inner, text='   文档转换工具  v2.0', style='AppSubtitle.TLabel').pack(side=tk.LEFT, padx=(8, 0))
+        ttk.Label(title_inner, text=f'   文档转换工具  v{__version__}', style='AppSubtitle.TLabel').pack(side=tk.LEFT, padx=(8, 0))
 
         # ── Main content area ──
         main_frame = ttk.Frame(self.root, style='Main.TFrame', padding=(15, 10, 15, 5))
