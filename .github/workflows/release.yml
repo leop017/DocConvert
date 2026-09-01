@@ -11,13 +11,12 @@ on:
         required: false
         default: ''
 
-if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
-
 permissions:
   contents: write
 
 jobs:
   build:
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     name: build (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
@@ -65,6 +64,7 @@ jobs:
           path: release-artefacts/
 
   release:
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     name: publish release
     needs: build
     runs-on: ubuntu-latest
@@ -109,6 +109,7 @@ jobs:
             artefacts/**
 
   pypi-publish:
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     name: publish to PyPI
     needs: release
     runs-on: ubuntu-latest
