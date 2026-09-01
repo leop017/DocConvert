@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "docconvert-local"
-version = "2.0.2"
+version = "2.0.3"
 description = "Clean Excel & Word → Markdown for RAG pipelines. Works 100% offline — no API keys, no cloud upload."
 readme = "README.md"
 requires-python = ">=3.10"
