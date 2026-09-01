@@ -9,6 +9,8 @@
 [![Build](https://github.com/leop017/DocConvert/actions/workflows/ci.yml/badge.svg)](https://github.com/leop017/DocConvert/actions)
 [![Stars](https://img.shields.io/github/stars/leop017/DocConvert?style=social)](https://github.com/leop017/DocConvert/stargazers)
 
+**中文版**: [README_zh.md](README_zh.md)
+
 ## Why DocConvert
 
 Most document-to-Markdown tools convert the file — they don't **clean** it. Raw outputs are full of page numbers, duplicate headers, and whitespace noise that eats your context window and dilutes retrieval quality.
