@@ -5,11 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.0.3] — 2026-09-01
+## \[v2.0.4] — 2026-09-01
+
+### Changed
+
+* Removed cross-reference link to README\_zh.md from README.md — PyPI does not render GitHub-relative links, causing a dead link in the package description.
+
+***
+
+## \[v2.0.3] — 2026-09-01
 
 ### Added
 
-* **Chinese README** ([README_zh.md](README_zh.md)) — full translation of README.md with links from both sides.
+* **Chinese README** ([README\_zh.md](README_zh.md)) — full translation of README.md with links from both sides.
 
 ### Changed
 
@@ -17,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ***
 
-## [v2.0.2] — 2026-09-01
+## \[v2.0.2] — 2026-09-01
 
 ### CI / Build
 
@@ -25,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ***
 
-## [v2.0.1] — 2026-08-31
+## \[v2.0.1] — 2026-08-31
 
 ### Changed
 
@@ -69,7 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ***
 
-## [v2.0.0] — 2026-08-30
+## \[v2.0.0] — 2026-08-30
 
 ### Added
 

@@ -9,8 +9,6 @@
 [![Build](https://github.com/leop017/DocConvert/actions/workflows/ci.yml/badge.svg)](https://github.com/leop017/DocConvert/actions)
 [![Stars](https://img.shields.io/github/stars/leop017/DocConvert?style=social)](https://github.com/leop017/DocConvert/stargazers)
 
-**中文版**: [README_zh.md](README_zh.md)
-
 ## Why DocConvert
 
 Most document-to-Markdown tools convert the file — they don't **clean** it. Raw outputs are full of page numbers, duplicate headers, and whitespace noise that eats your context window and dilutes retrieval quality.
@@ -106,10 +104,15 @@ for name, path, error in results:
 For advanced usage, see the [API Reference](docs/api/index.md):
 
 * [Module overview](docs/api/index.md#module-overview) ·
+
 * [CLI reference](docs/api/cli.md) ·
+
 * [ConversionController](docs/api/controller.md) ·
+
 * [Converters / Exporters / Cleaners](docs/api/converters.md) ·
+
 * [Config & Models](docs/api/config.md) ·
+
 * [GUI (Tkinter)](docs/api/gui.md)
 
 ### RAG Pipeline Integration
