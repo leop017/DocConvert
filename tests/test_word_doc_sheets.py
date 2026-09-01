@@ -70,7 +70,7 @@ class TestDocConverterJsonFormat(unittest.TestCase):
 
     @unittest.skipUnless(
         __import__("importlib").util.find_spec("textract") is not None,
-        "textract not installed (Linux/macOS only)",
+        "textract not installed (Linux/macOS only; Windows skips)",
     )
     def test_json_output_is_pretty_printed(self):
         import json

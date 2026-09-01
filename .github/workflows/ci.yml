@@ -36,7 +36,7 @@ jobs:
         shell: bash
         run: |
           # xlwt: required by TestExcelConverterXlsCache to generate .xls fixtures
-          # textract: required by TestDocConverterJsonFormat; only install on Linux
+          # textract: only works on Linux/macOS; Windows skips via import check in tests
           pip install xlwt
           if [ "$RUNNER_OS" != "Windows" ]; then
             pip install "textract>=1.6.0"
