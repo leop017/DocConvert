@@ -9,6 +9,8 @@
 [![Build](https://github.com/leop017/DocConvert/actions/workflows/ci.yml/badge.svg)](https://github.com/leop017/DocConvert/actions)
 [![Stars](https://img.shields.io/github/stars/leop017/DocConvert?style=social)](https://github.com/leop017/DocConvert/stargazers)
 
+**中文版**: [README_zh.md](README_zh.md)
+
 ## Why DocConvert
 
 Most document-to-Markdown tools convert the file — they don't **clean** it. Raw outputs are full of page numbers, duplicate headers, and whitespace noise that eats your context window and dilutes retrieval quality.
@@ -84,11 +86,13 @@ python main.py convert input.xlsx --format json --sheet "Sheet1" --sheet "Sheet2
 
 ```python
 from docconvert.controller import ConversionController
+from docconvert.config import DEFAULT_CONFIG
 
-controller = ConversionController()
+controller = ConversionController(DEFAULT_CONFIG)
 results = controller.convert_files(
     files=["input.xlsx", "report.docx"],
     output_fmt="md",
+    output_dir="./out",
     enhanced_md=True,
 )
 
@@ -99,18 +103,28 @@ for name, path, error in results:
         print(f"OK: {name} → {path}")
 ```
 
+For advanced usage, see the [API Reference](docs/api/index.md):
+
+* [Module overview](docs/api/index.md#module-overview) ·
+* [CLI reference](docs/api/cli.md) ·
+* [ConversionController](docs/api/controller.md) ·
+* [Converters / Exporters / Cleaners](docs/api/converters.md) ·
+* [Config & Models](docs/api/config.md) ·
+* [GUI (Tkinter)](docs/api/gui.md)
+
 ### RAG Pipeline Integration
 
 ```python
 from docconvert.controller import ConversionController
+from docconvert.config import DEFAULT_CONFIG
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-# Convert and clean
-controller = ConversionController()
+controller = ConversionController(DEFAULT_CONFIG)
 docs = []
 for name, path, error in controller.convert_files(
     files=["contracts/*.docx"],
     output_fmt="md",
+    output_dir="./out",
     enhanced_md=True,
 ):
     if not error:
