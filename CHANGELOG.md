@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## \[Unreleased]
+
+### Changed
+
+* **CI: bump GitHub Actions** (Dependabot PR [#1](https://github.com/leop017/DocConvert/pull/1), commit `a3d9d63`)
+  * `actions/checkout`: `v4` → `v7`
+  * `actions/setup-python`: `v5` → `v7`
+  * `actions/upload-artifact`: `v4` → `v7`
+  * `actions/download-artifact`: `v4` → `v8`
+  * `softprops/action-gh-release`: `v2` → `v3`
+
+  All five upgrades were verified by the CI matrix (ubuntu/windows × Python 3.10/3.11) before merge. No source-level changes are required; only the pinned Action versions changed.
+
+### Notes
+
+* Dependabot is now enabled (`.github/dependabot.yml`) and will open weekly PRs for both the `pip` and `github-actions` ecosystems.
+
+***
+
 ## \[v2.0.4] — YANKED (2026-09-02)
 
 ### Status
