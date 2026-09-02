@@ -208,7 +208,7 @@ class TestDecodeText(unittest.TestCase):
     """
 
     def test_utf8_bytes(self):
-        self.assertEqual(decode_text('中文内容'.encode('utf-8')), '中文内容')
+        self.assertEqual(decode_text('中文内容'.encode()), '中文内容')
 
     def test_gbk_bytes(self):
         self.assertEqual(decode_text('中文内容'.encode('gbk')), '中文内容')

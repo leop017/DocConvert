@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, Optional
+from typing import Optional
 
-from docconvert.config import AppConfig, DEFAULT_CONFIG
+from docconvert.config import DEFAULT_CONFIG, AppConfig
 from docconvert.logger import get_logger
 
 

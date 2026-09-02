@@ -8,9 +8,9 @@ from typing import Optional
 import mammoth
 from docx import Document as DocxDocument
 
+from docconvert.cleaners import WordMdCleaner
 from docconvert.config import AppConfig
 from docconvert.converters.base import BaseConverter
-from docconvert.cleaners import WordMdCleaner
 from docconvert.utils import clean_filename, html_to_md
 
 

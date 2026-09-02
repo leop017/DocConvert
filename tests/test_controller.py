@@ -1,5 +1,6 @@
 import os
 import tempfile
+import tkinter as tk
 import unittest
 from pathlib import Path
 
@@ -371,6 +372,7 @@ class TestGuiReconvertRegression(unittest.TestCase):
 
     def test_on_conversion_done_accepts_one_argument(self):
         import inspect
+
         from docconvert.gui.app import DocConvertApp
         sig = inspect.signature(DocConvertApp._on_conversion_done)
         # Must accept at least one positional argument (the boolean
@@ -396,6 +398,7 @@ class TestGuiWindowSizeFitsContent(unittest.TestCase):
 
     def test_window_grows_to_fit_content(self):
         import tkinter as tk
+
         from docconvert.gui.app import DocConvertApp
 
         root = tk.Tk()
@@ -432,6 +435,7 @@ class TestGuiWindowSizeFitsContent(unittest.TestCase):
         # Sanity: the explicit default remains a sensible minimum
         # (large enough to show the bottom bar on low-DPI systems).
         import tkinter as tk
+
         from docconvert.gui.app import DocConvertApp
 
         root = tk.Tk()
@@ -667,6 +671,7 @@ class TestGuiProgressResetOnAlreadyRunning(unittest.TestCase):
         # keep spinning forever after the user has been told the
         # batch was rejected.
         import tkinter as tk
+
         from docconvert.gui.app import DocConvertApp
         root = tk.Tk()
         try:

@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, Optional
 
-from docconvert.config import AppConfig, DEFAULT_CONFIG
+from docconvert.config import DEFAULT_CONFIG, AppConfig
 
 
 class BaseExporter(ABC):

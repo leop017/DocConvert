@@ -120,8 +120,8 @@ def escape_md_cell(text: str) -> str:
     return text.replace("|", "\\|").replace("\n", "<br>")
 
 def html_to_md(html_content: str) -> str:
-    from bs4 import BeautifulSoup
     import markdownify
+    from bs4 import BeautifulSoup
     soup = BeautifulSoup(html_content, 'html.parser')
     for tag in soup(['script', 'style']):
         tag.extract()

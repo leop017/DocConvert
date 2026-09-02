@@ -4,9 +4,9 @@ import argparse
 import sys
 from pathlib import Path
 
+from docconvert.__version__ import __version__
 from docconvert.config import DEFAULT_CONFIG
 from docconvert.controller import ConversionController
-from docconvert.__version__ import __version__
 from docconvert.logger import setup_logging
 from docconvert.models import ProgressEvent
 

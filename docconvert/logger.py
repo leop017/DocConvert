@@ -2,13 +2,11 @@ from __future__ import annotations
 
 import logging
 import sys
-from typing import Union
-
 
 LOGGER_NAME = "docconvert"
 
 
-def setup_logging(level: Union[int, str] = logging.INFO) -> logging.Logger:
+def setup_logging(level: int | str = logging.INFO) -> logging.Logger:
     logger = logging.getLogger(LOGGER_NAME)
     logger.setLevel(level)
 

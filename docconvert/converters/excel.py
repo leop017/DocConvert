@@ -19,6 +19,7 @@ from docconvert.utils import (
     unique_cleaned_suffixes,
 )
 
+
 class _XlsMergeRange:
     """Mimics openpyxl's merged cell range for use with _build_merged_map."""
     def __init__(self, min_col: int, min_row: int, max_col: int, max_row: int):
@@ -45,7 +46,7 @@ class ExcelConverter(BaseConverter):
 
         if ext == '.xls':
             try:
-                import xlrd
+                import xlrd  # noqa: F401
             except ImportError:
                 raise RuntimeError('需安装 xlrd 库以处理 .xls 文件')
 
@@ -228,7 +229,7 @@ class ExcelConverter(BaseConverter):
         return filtered
 
     @staticmethod
-    def _remap_merged_rows(merged_ranges: list, df: "pd.DataFrame") -> list:
+    def _remap_merged_rows(merged_ranges: list, df: pd.DataFrame) -> list:
         """Translate workbook row numbers to post-``dropna`` rendered rows.
 
         ``merged_ranges`` arrive in 1-based workbook coordinates. After

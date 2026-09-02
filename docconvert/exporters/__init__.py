@@ -1,7 +1,7 @@
 from docconvert.exporters.base import BaseExporter
 from docconvert.exporters.html import HtmlExporter
-from docconvert.exporters.markdown import MarkdownExporter
 from docconvert.exporters.json_exporter import JsonExporter
+from docconvert.exporters.markdown import MarkdownExporter
 
 __all__ = [
     "BaseExporter",

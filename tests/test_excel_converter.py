@@ -566,11 +566,15 @@ class TestExcelConverterMergeAfterBlankRow(unittest.TestCase):
         wb = Workbook()
         wb.remove(wb.active)
         ws = wb.create_sheet("S")
-        ws.cell(1, 1, "H1"); ws.cell(1, 2, "H2")
-        ws.cell(2, 1, "row2A"); ws.cell(2, 2, "row2B")
+        ws.cell(1, 1, "H1")
+        ws.cell(1, 2, "H2")
+        ws.cell(2, 1, "row2A")
+        ws.cell(2, 2, "row2B")
         # row 3 fully empty -> dropped by dropna
-        ws.cell(4, 1, "MERGED"); ws.cell(4, 2, "X")  # A4:B4 after the gap
-        ws.cell(5, 1, "row5A"); ws.cell(5, 2, "row5B")
+        ws.cell(4, 1, "MERGED")
+        ws.cell(4, 2, "X")  # A4:B4 after the gap
+        ws.cell(5, 1, "row5A")
+        ws.cell(5, 2, "row5B")
         ws.merge_cells("A4:B4")
         wb.save(self.xlsx)
         self.out_dir = Path(self.tmp.name) / "out"

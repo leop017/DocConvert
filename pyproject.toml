@@ -54,3 +54,39 @@ include = ["docconvert", "docconvert.*"]
 
 [tool.setuptools.package-data]
 docconvert = ["py.typed"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+extend-exclude = [
+    "dist",
+    "build",
+    ".venv",
+    "venv",
+]
+
+[tool.ruff.lint]
+# Conservative starting set: errors, warnings, pyflakes, isort, pyupgrade.
+# Extend incrementally after the existing codebase is cleaned up.
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+]
+ignore = [
+    "E501",   # line too long — formatter is the source of truth, not the linter
+    "UP045",  # non-pep604-annotation-optional — `Optional[X]` style is widely used; do not force rewrite
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "E402",   # module-level import not at top of file — test setup can require this
+    "F401",   # imported but unused — tests often import helpers to assert side effects
+    "F841",   # local variable assigned but never used — debug fixtures
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["docconvert", "tests"]
+combine-as-imports = true

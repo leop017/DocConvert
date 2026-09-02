@@ -113,8 +113,8 @@ class TestWordMdCleanerEmptyLineCollapse(unittest.TestCase):
     """``remove_empty_lines`` — collapse runs of ≥2 empty lines into one."""
 
     def _cleaner(self):
-        from docconvert.config import AppConfig
         from docconvert.cleaners import WordMdCleaner
+        from docconvert.config import AppConfig
         cfg = AppConfig(cleaning_rules={
             "remove_page_numbers": False,
             "remove_duplicate_headers": False,
@@ -137,8 +137,8 @@ class TestWordMdCleanerEmptyLineCollapse(unittest.TestCase):
         self.assertEqual(c.clean("a\n   \n\t\n   \nb"), "a\n\nb")
 
     def test_no_op_when_disabled(self):
-        from docconvert.config import AppConfig
         from docconvert.cleaners import WordMdCleaner
+        from docconvert.config import AppConfig
         cfg = AppConfig(cleaning_rules={
             "remove_page_numbers": False,
             "remove_duplicate_headers": False,
@@ -153,8 +153,8 @@ class TestWordMdCleanerNormalizeSpaces(unittest.TestCase):
     """``normalize_spaces`` — full-width space, tabs, internal runs, trailing."""
 
     def _cleaner(self):
-        from docconvert.config import AppConfig
         from docconvert.cleaners import WordMdCleaner
+        from docconvert.config import AppConfig
         cfg = AppConfig(cleaning_rules={
             "remove_page_numbers": False,
             "remove_duplicate_headers": False,
@@ -216,8 +216,8 @@ class TestWordMdCleanerNormalizeSpaces(unittest.TestCase):
         self.assertEqual(c.clean("  hello   world"), "  hello world")
 
     def test_no_op_when_disabled(self):
-        from docconvert.config import AppConfig
         from docconvert.cleaners import WordMdCleaner
+        from docconvert.config import AppConfig
         cfg = AppConfig(cleaning_rules={
             "remove_page_numbers": False,
             "remove_duplicate_headers": False,
@@ -232,8 +232,8 @@ class TestWordMdCleanerDedupeConsecutive(unittest.TestCase):
     """``remove_duplicate_headers`` — drop consecutive duplicate non-empty lines."""
 
     def _cleaner(self):
-        from docconvert.config import AppConfig
         from docconvert.cleaners import WordMdCleaner
+        from docconvert.config import AppConfig
         cfg = AppConfig(cleaning_rules={
             "remove_page_numbers": False,
             "remove_duplicate_headers": True,
@@ -263,8 +263,8 @@ class TestWordMdCleanerDedupeConsecutive(unittest.TestCase):
     def test_normalize_runs_first_so_whitespace_diffs_dedup(self):
         # When paired with normalize_spaces, lines that differ only in
         # whitespace should also be deduped (normalize runs first).
-        from docconvert.config import AppConfig
         from docconvert.cleaners import WordMdCleaner
+        from docconvert.config import AppConfig
         cfg = AppConfig(cleaning_rules={
             "remove_page_numbers": False,
             "remove_duplicate_headers": True,
@@ -280,8 +280,8 @@ class TestWordMdCleanerDedupeConsecutive(unittest.TestCase):
         self.assertEqual(c.clean("a\n\n\nb"), "a\n\n\nb")
 
     def test_no_op_when_disabled(self):
-        from docconvert.config import AppConfig
         from docconvert.cleaners import WordMdCleaner
+        from docconvert.config import AppConfig
         cfg = AppConfig(cleaning_rules={
             "remove_page_numbers": False,
             "remove_duplicate_headers": False,
@@ -296,8 +296,8 @@ class TestWordMdCleanerAllRulesCombined(unittest.TestCase):
     """All four rules work together without interfering."""
 
     def test_all_four_active_full_pipeline(self):
-        from docconvert.config import AppConfig
         from docconvert.cleaners import WordMdCleaner
+        from docconvert.config import AppConfig
         cfg = AppConfig(cleaning_rules={
             "remove_page_numbers": True,
             "remove_duplicate_headers": True,
@@ -333,8 +333,8 @@ class TestWordMdCleanerCodeBlockProtection(unittest.TestCase):
             "normalize_spaces": True,
         }
         rules.update(overrides)
-        from docconvert.config import AppConfig
         from docconvert.cleaners import WordMdCleaner
+        from docconvert.config import AppConfig
         return WordMdCleaner(AppConfig(cleaning_rules=rules))
 
     def test_fenced_page_markers_not_removed(self):

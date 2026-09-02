@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Callable
 from pathlib import Path
-from threading import Thread, Event, Lock
-from typing import Callable, Optional
+from threading import Event, Lock, Thread
+from typing import Optional
 
-from docconvert.config import AppConfig, DEFAULT_CONFIG
-from docconvert.converters import ExcelConverter, WordConverter, DocConverter
+from docconvert.config import DEFAULT_CONFIG, AppConfig
+from docconvert.converters import DocConverter, ExcelConverter, WordConverter
 from docconvert.converters.base import BaseConverter
 from docconvert.logger import get_logger
 from docconvert.models import ProgressEvent

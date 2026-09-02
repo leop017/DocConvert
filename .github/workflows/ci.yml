@@ -37,7 +37,7 @@ jobs:
         run: |
           # xlwt: required by TestExcelConverterXlsCache to generate .xls fixtures
           # textract: only works on Linux/macOS; Windows skips via import check in tests
-          pip install xlwt
+          pip install xlwt ruff mypy
           if [ "$RUNNER_OS" != "Windows" ]; then
             pip install "textract>=1.6.0"
           fi
@@ -47,6 +47,16 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y xvfb
+
+      - name: Run ruff lint
+        shell: bash
+        run: |
+          ruff check docconvert/ tests/
+
+      - name: Run mypy type check
+        shell: bash
+        run: |
+          mypy docconvert/ --ignore-missing-imports
 
       - name: Run tests
         shell: bash
@@ -64,12 +74,6 @@ jobs:
           rc=${PIPESTATUS[0]}
           echo "===== exit=$rc =====" | tee -a ci-artifacts/unittest.log
           exit $rc
-
-      - name: Run mypy type check
-        shell: bash
-        run: |
-          pip install mypy
-          mypy docconvert/ --ignore-missing-imports
 
       - name: Upload CI artifacts
         if: always()

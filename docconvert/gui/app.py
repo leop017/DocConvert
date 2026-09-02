@@ -4,18 +4,17 @@ import queue
 import tkinter as tk
 from pathlib import Path
 from threading import Thread
-from tkinter import ttk, filedialog, messagebox
+from tkinter import filedialog, messagebox, ttk
 from typing import Optional
 
 from docx import Document as DocxDocument
 
+from docconvert.__version__ import __version__
 from docconvert.config import DEFAULT_CONFIG, AppConfig
 from docconvert.controller import ConversionController
-from docconvert.__version__ import __version__
 from docconvert.logger import get_logger
 from docconvert.models import ProgressEvent
 from docconvert.utils import decode_text, get_excel_sheet_names
-
 
 ALL_EXTS = {'.xlsx', '.xls', '.docx', '.doc'}
 ALL_EXTS_LIST = sorted(ALL_EXTS)
@@ -563,7 +562,7 @@ class DocConvertApp:
         read_truncated = False
         for enc in ('utf-8', 'gbk'):
             try:
-                with open(filepath, 'r', encoding=enc) as f:
+                with open(filepath, encoding=enc) as f:
                     content = f.read(MAX_READ + 1)
                 if len(content) > MAX_READ:
                     content = content[:MAX_READ]
@@ -577,7 +576,7 @@ class DocConvertApp:
                 return
         if content is None:
             try:
-                with open(filepath, 'r', encoding='utf-8', errors='replace') as f:
+                with open(filepath, encoding='utf-8', errors='replace') as f:
                     content = f.read(MAX_READ + 1)
                 if len(content) > MAX_READ:
                     content = content[:MAX_READ]
@@ -620,7 +619,7 @@ class DocConvertApp:
             self.file_type = 'excel'
             if ext == '.xls':
                 try:
-                    import xlrd
+                    import xlrd  # noqa: F401
                 except ImportError:
                     messagebox.showerror('错误', '处理 .xls 文件需要安装 xlrd 库\n\n请运行： pip install xlrd')
                     return False
@@ -636,7 +635,7 @@ class DocConvertApp:
             return True
         elif ext == '.doc':
             try:
-                import textract
+                import textract  # noqa: F401
             except ImportError:
                 messagebox.showerror('错误', '处理 .doc 文件需要安装 textract 库\n\n请运行： pip install textract')
                 return False

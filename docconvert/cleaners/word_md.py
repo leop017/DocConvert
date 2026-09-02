@@ -4,8 +4,7 @@ import re
 from typing import Optional
 
 from docconvert.cleaners.base import BaseCleaner
-from docconvert.config import AppConfig, DEFAULT_CONFIG
-
+from docconvert.config import DEFAULT_CONFIG, AppConfig
 
 _UNESCAPE_PATTERN = re.compile(r'\\([\\\[\]\-.\(\)])')
 _HORIZ_WS_PATTERN = re.compile(r'[ \t]+')
