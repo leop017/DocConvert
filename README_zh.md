@@ -117,10 +117,10 @@ for name, path, error in results:
 ```python
 from docconvert.controller import ConversionController
 from docconvert.config import DEFAULT_CONFIG
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from docconvert.chunkers import get_chunker
 
 controller = ConversionController(DEFAULT_CONFIG)
-docs = []
+paths = []
 for name, path, error in controller.convert_files(
     files=["contracts/*.docx"],
     output_fmt="md",
@@ -128,12 +128,35 @@ for name, path, error in controller.convert_files(
     enhanced_md=True,
 ):
     if not error:
-        with open(path) as f:
-            docs.append(f.read())
+        paths.append(path)
 
-# 分块 + embedding —— 噪声已去除
-splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-chunks = splitter.split_text("\n".join(docs))
+# 使用内置分块器 —— 无需 langchain
+chunker = get_chunker("sentence", chunk_size=1000, chunk_overlap=100)
+chunks = []
+for path in paths:
+    with open(path) as f:
+        chunks.extend(chunker.chunk(f.read()))
+```
+
+#### 内置分块器
+
+| 策略           | 说明                                    |
+| -------------- | --------------------------------------- |
+| `fixed` / `fixed_size` | 可配置重叠的滑动字符窗口                      |
+| `sentence`     | 按句子边界（`！？。.!`）切分，同时尊重块大小   |
+| `markdown` / `md`      | 将同标题下的段落归入同一分块                  |
+
+```python
+from docconvert.chunkers import get_chunker
+
+# 固定大小滑动窗口
+chunker = get_chunker("fixed_size", chunk_size=800, chunk_overlap=100)
+
+# Markdown 感知：保持同标题下段落在一起
+chunker = get_chunker("markdown", chunk_size=1200)
+
+# 句子边界切分
+chunker = get_chunker("sentence", chunk_size=500)
 ```
 
 ## 输出预览
@@ -196,6 +219,10 @@ config = AppConfig(
 
 * **Python API** —— 程序化控制，完整类型提示
 
+* **解析器** —— `docconvert.parsers`（`MarkdownParser`、`HtmlParser`、`PlainTextParser`）将原始 HTML / Markdown / 纯文本转换为结构化的 `Document` 对象，供下游处理使用。
+
+* **分块器** —— `docconvert.chunkers`（`FixedSizeChunker`、`SentenceChunker`、`MarkdownChunker`）将解析后的内容切分为 embedding 就绪的切片，零外部依赖。
+
 * **独立可执行文件** —— 下载 Windows / macOS / Linux 的 `.exe`，无需安装 Python
 
 ## 发布版本（无需 Python）
@@ -211,7 +238,8 @@ docconvert/
   exporters/      # HTML / Markdown / JSON 输出
   controller/     # 调度、异步、覆盖检测
   gui/            # Tkinter 桌面应用
-  parsers/, chunkers/  # 扩展点
+  parsers/          # 原始内容解析器（HTML、Markdown、纯文本）
+  chunkers/         # RAG 管道分块器
 tests/
 main.py           # GUI / CLI 入口
 ```
