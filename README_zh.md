@@ -3,7 +3,7 @@
 > 从 Excel & Word 中提取干净的 Markdown 和结构化数据 —— 专为 RAG 管道和 LLM 工作流设计。
 > 100% 离线运行，无需 API 密钥，数据不离开你的机器。
 
-[![PyPI version](https://img.shields.io/pypi/v/docconvert-local.svg?cachebust=1725084000)](https://pypi.org/project/docconvert-local/)
+[![PyPI version](https://img.shields.io/pypi/v/docconvert-local.svg)](https://pypi.org/project/docconvert-local/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 [![Build](https://github.com/leop017/DocConvert/actions/workflows/ci.yml/badge.svg)](https://github.com/leop017/DocConvert/actions)

@@ -3,7 +3,7 @@
 > Clean Markdown & structured data from Excel & Word — built for RAG pipelines and LLM workflows.
 > Works 100% offline. No API keys. No data leaves your machine.
 
-[![PyPI version](https://img.shields.io/pypi/v/docconvert-local.svg?cachebust=1725084000)](https://pypi.org/project/docconvert-local/)
+[![PyPI version](https://img.shields.io/pypi/v/docconvert-local.svg)](https://pypi.org/project/docconvert-local/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 [![Build](https://github.com/leop017/DocConvert/actions/workflows/ci.yml/badge.svg)](https://github.com/leop017/DocConvert/actions)
