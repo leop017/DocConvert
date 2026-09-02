@@ -1,10 +1,12 @@
-from __future__ import annotations
+"""Backwards-compatible re-export.
 
-from abc import ABC, abstractmethod
-from typing import Any
+Historically this module hosted :class:`BaseParser`. The class moved to
+:mod:`docconvert.parsers.base` so that the parser package can grow with
+format-specific implementations (``markdown`` / ``html`` / ``plain``).
+External callers that still do ``from docconvert.parsers.semantic import
+BaseParser`` keep working via this shim.
+"""
 
+from docconvert.parsers.base import BaseParser
 
-class BaseParser(ABC):
-    @abstractmethod
-    def parse(self, content: Any, **kwargs) -> Any:
-        ...
+__all__ = ["BaseParser"]
