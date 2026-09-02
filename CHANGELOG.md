@@ -5,7 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.0.3] — 2026-09-01
+## \[v2.0.4] — YANKED (2026-09-02)
+
+### Status
+
+* **YANKED** — this tag was published to PyPI and then reverted.
+
+* The release commit `9cc868a` ("bump version to 2.0.4, fix dead PyPI cross-reference link") was reverted by `817467f` ("remove v2.0.4 release, restore Chinese README link") because the only intended change was a documentation tweak, not a feature/bugfix that warranted a version bump.
+
+* The on-disk source remains at **v2.0.3**; no user-visible behavior changed between v2.0.3 and the YANKED v2.0.4.
+
+### Notes
+
+* If you installed `docconvert-local==2.0.4` from PyPI, upgrade to **v2.0.3** (the current published version).
+
+***
+
+## \[v2.0.3] — 2026-09-01
 
 ### Added
 
