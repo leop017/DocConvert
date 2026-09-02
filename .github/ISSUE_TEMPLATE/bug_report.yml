@@ -1,0 +1,111 @@
+name: "\U0001F41E Bug Report"
+description: Report a bug in DocConvert — wrong output, crash, unexpected behavior.
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug. Please fill the template below so we can
+        reproduce and fix it.
+
+        **Note**: security issues go through `SECURITY.md`, **not** here.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: "What happened?"
+      description: A clear, one-paragraph description of the bug.
+      placeholder: |
+        When I convert /path/to/sample.xlsx with --format md, the
+        output file is empty. No error is shown.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: "Steps to reproduce"
+      description: The smallest set of steps that produces the bug. Use a numbered list.
+      placeholder: |
+        1. Install `pip install docconvert-local[all]==2.0.3`
+        2. Run `python -m docconvert.cli convert sample.xlsx -f md`
+        3. Observe `output.md` is 0 bytes
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Expected behavior"
+      description: What you expected to happen.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: input_format
+    attributes:
+      label: "Input format"
+      description: Which input format triggered the bug?
+      options:
+        - ".xlsx (Excel 2007+)"
+        - ".xls (Excel 97-2003)"
+        - ".docx (Word 2007+)"
+        - ".doc (Word 97-2003)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: output_format
+    attributes:
+      label: "Output format"
+      options:
+        - "html"
+        - "md"
+        - "json"
+    validations:
+      required: true
+
+  - type: input
+    id: cli_or_gui
+    attributes:
+      label: "CLI or GUI?"
+      description: Which entry point were you using?
+      placeholder: "CLI / GUI / both / library API"
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: "Environment"
+      description: |
+        Paste the output of:
+        ```
+        python -V
+        pip show docconvert-local
+        uname -a   # Linux/macOS
+        ver        # Windows
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Logs / traceback"
+      description: |
+        Run with `--verbose` (CLI) or DEBUG logging and paste the relevant lines.
+        Wrap tracebacks in triple backticks.
+    validations:
+      required: false
+
+  - type: textarea
+    id: attachments
+    attributes:
+      label: "Attachments"
+      description: |
+        A sample file (if shareable) helps us reproduce. **Never paste a file
+        containing real data** — anonymize first.
+    validations:
+      required: false

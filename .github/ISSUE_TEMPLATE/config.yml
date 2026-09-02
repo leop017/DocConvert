@@ -1,0 +1,15 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "\U0001F6E1 Security report (private)"
+    url: https://github.com/leop017/DocConvert/blob/main/SECURITY.md
+    about: |
+      Security issues MUST NOT be filed as a public Issue.
+      Use SECURITY.md for private disclosure.
+
+  - name: "\U0001F4DC Code of Conduct"
+    url: https://github.com/leop017/DocConvert/blob/main/CODE_OF_CONDUCT.md
+    about: Please read the Contributor Covenant before participating.
+
+  - name: "\U0001F4D6 Documentation"
+    url: https://github.com/leop017/DocConvert#readme
+    about: README + CODE_WIKI cover most "how do I…?" questions.

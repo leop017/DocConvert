@@ -1,0 +1,37 @@
+name: "\u2753 Question / Help"
+description: Ask how to use DocConvert — installation, API usage, behavior questions.
+title: "[Question]: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Quick questions are welcome. For longer discussions, prefer
+        GitHub Discussions (once enabled) or the security channel
+        for private matters.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: "Your question"
+      description: |
+        What are you trying to do? Include the smallest code snippet or
+        CLI command that demonstrates the question.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: "What have you tried?"
+      description: Anything you already attempted, even unsuccessful.
+    validations:
+      required: false
+
+  - type: input
+    id: version
+    attributes:
+      label: "DocConvert version"
+      placeholder: "2.0.3"
+    validations:
+      required: false

@@ -1,0 +1,64 @@
+name: "\U0001F4A1 Feature Request"
+description: Suggest a new feature or an improvement to an existing one.
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the problem you'd like solved, not just the solution.
+        We prefer problem-statements so the team can co-design the fix.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: "Problem / use case"
+      description: |
+        What's the pain? Who experiences it? How often?
+        Example: "I have to re-run DocConvert on the same 200-file folder
+        whenever a single file changes. Right now there's no incremental mode."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: "Proposed solution"
+      description: |
+        Sketch the API/UX you have in mind. Code snippets are welcome
+        but optional.
+      placeholder: |
+        ```python
+        controller.convert_files(files, output_fmt='md', incremental=True)
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternatives considered"
+      description: What other approaches did you weigh?
+    validations:
+      required: false
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: "Impact"
+      description: |
+        - Who benefits? (RAG pipelines / ETL / personal use / …)
+        - Is this a breaking change?
+    validations:
+      required: false
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: "Scope"
+      options:
+        - "Small — local change, < 1 day of work"
+        - "Medium — new module or significant refactor"
+        - "Large — new public API / breaking change"
+    validations:
+      required: false
