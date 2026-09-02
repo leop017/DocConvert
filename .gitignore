@@ -30,6 +30,8 @@ env/
 .mypy_cache/
 .pytest_cache/
 .ruff_cache/
+.coverage
+ci-artifacts/
 
 # Logs
 *.log

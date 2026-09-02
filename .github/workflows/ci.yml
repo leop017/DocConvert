@@ -37,7 +37,7 @@ jobs:
         run: |
           # xlwt: required by TestExcelConverterXlsCache to generate .xls fixtures
           # textract: only works on Linux/macOS; Windows skips via import check in tests
-          pip install xlwt ruff mypy
+          pip install xlwt ruff mypy coverage
           if [ "$RUNNER_OS" != "Windows" ]; then
             pip install "textract>=1.6.0"
           fi
@@ -64,15 +64,19 @@ jobs:
           mkdir -p ci-artifacts
           python --version 2>&1 | tee ci-artifacts/python-version.txt
           pip list 2>/dev/null | tee ci-artifacts/pip-list.txt || true
+          COVERAGE_SOURCE="docconvert"
           if [ "$RUNNER_OS" = "Linux" ]; then
             echo "===== Running under xvfb =====" | tee ci-artifacts/unittest.log
-            xvfb-run -a python -m unittest discover -s tests -v 2>&1 | tee -a ci-artifacts/unittest.log
+            xvfb-run -a coverage run --source=$COVERAGE_SOURCE -m unittest discover -s tests -v 2>&1 | tee -a ci-artifacts/unittest.log
           else
             echo "===== Running tests =====" | tee ci-artifacts/unittest.log
-            python -m unittest discover -s tests -v 2>&1 | tee -a ci-artifacts/unittest.log
+            coverage run --source=$COVERAGE_SOURCE -m unittest discover -s tests -v 2>&1 | tee -a ci-artifacts/unittest.log
           fi
           rc=${PIPESTATUS[0]}
           echo "===== exit=$rc =====" | tee -a ci-artifacts/unittest.log
+          coverage report --show-missing 2>&1 | tee ci-artifacts/coverage-report.txt
+          coverage xml -o ci-artifacts/coverage.xml
+          coverage html -d ci-artifacts/coverage-html
           exit $rc
 
       - name: Upload CI artifacts
@@ -82,3 +86,10 @@ jobs:
           name: ci-logs-${{ matrix.os }}-${{ matrix.python-version }}
           path: ci-artifacts/
           if-no-files-found: ignore
+
+      - name: Upload coverage to Codecov
+        if: runner.os == 'Linux'
+        uses: codecov/codecov-action@v7
+        with:
+          files: ./ci-artifacts/coverage.xml
+          fail_ci_if_error: false
