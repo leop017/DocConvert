@@ -32,6 +32,7 @@ env/
 .ruff_cache/
 .coverage
 ci-artifacts/
+htmlcov/
 
 # Logs
 *.log
