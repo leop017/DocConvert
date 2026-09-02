@@ -122,10 +122,10 @@ For advanced usage, see the [API Reference](docs/api/index.md):
 ```python
 from docconvert.controller import ConversionController
 from docconvert.config import DEFAULT_CONFIG
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from docconvert.chunkers import get_chunker
 
 controller = ConversionController(DEFAULT_CONFIG)
-docs = []
+paths = []
 for name, path, error in controller.convert_files(
     files=["contracts/*.docx"],
     output_fmt="md",
@@ -133,12 +133,35 @@ for name, path, error in controller.convert_files(
     enhanced_md=True,
 ):
     if not error:
-        with open(path) as f:
-            docs.append(f.read())
+        paths.append(path)
 
-# Chunk and embed — noise already removed
-splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-chunks = splitter.split_text("\n".join(docs))
+# Chunk with built-in chunkers — no langchain needed
+chunker = get_chunker("sentence", chunk_size=1000, chunk_overlap=100)
+chunks = []
+for path in paths:
+    with open(path) as f:
+        chunks.extend(chunker.chunk(f.read()))
+```
+
+#### Built-in chunkers
+
+| Strategy       | Description                              |
+| -------------- | ---------------------------------------- |
+| `fixed` / `fixed_size` | Sliding character window with configurable overlap          |
+| `sentence`     | Splits on sentence boundaries (`！？。.!`) and respects chunk size |
+| `markdown` / `md`      | Groups paragraphs under the same heading anchor            |
+
+```python
+from docconvert.chunkers import get_chunker
+
+# Fixed-size sliding window
+chunker = get_chunker("fixed_size", chunk_size=800, chunk_overlap=100)
+
+# Markdown-aware: keeps paragraphs under the same heading together
+chunker = get_chunker("markdown", chunk_size=1200)
+
+# Sentence-boundary splitting
+chunker = get_chunker("sentence", chunk_size=500)
 ```
 
 ## Output Preview
@@ -201,6 +224,10 @@ All four rules are enabled by default with `--enhanced`. Set any to `False` to k
 
 * **Python API** — Programmatic control with full type hints
 
+* **Parsers** — `docconvert.parsers` (`MarkdownParser`, `HtmlParser`, `PlainTextParser`) turns raw HTML / Markdown / text into structured `Document` objects for downstream processing.
+
+* **Chunkers** — `docconvert.chunkers` (`FixedSizeChunker`, `SentenceChunker`, `MarkdownChunker`) slices parsed content into embedding-ready chunks with zero external dependencies.
+
 * **Executable releases** — Download a standalone `.exe` for Windows / macOS / Linux, no Python install needed
 
 ## Releases (no Python needed)
@@ -216,7 +243,8 @@ docconvert/
   exporters/      # HTML / Markdown / JSON output
   controller/     # Orchestration, async, overwrite checks
   gui/            # Tkinter desktop app
-  parsers/, chunkers/  # Extension points
+  parsers/          # Raw-content parsers (HTML, Markdown, plain text)
+  chunkers/         # Text chunkers for RAG pipelines
 tests/
 main.py           # GUI / CLI entry point
 ```
