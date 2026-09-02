@@ -16,17 +16,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * **`docconvert.parsers` subpackage** — full parser layer feeding `Document` / `Element` data models.
-  * [`MarkdownParser`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/parsers/markdown.py) — headings (H1–H6), fenced code blocks, tables, ordered/unordered lists; strips YAML front-matter when present.
-  * [`HtmlParser`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/parsers/html.py) — BeautifulSoup-driven extraction of headings, lists, tables, `<pre>` blocks; drops `<script>` and `<style>` nodes automatically.
-  * [`PlainTextParser`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/parsers/plain.py) — normalizes whitespace and splits long text into paragraphs.
-  * [`BaseParser`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/parsers/base.py) ABC + [`get_parser()`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/parsers/__init__.py) factory.
-  * [`models.py`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/parsers/models.py) — `Document`, `Element`, `Chunk` dataclasses shared across parsers and chunkers.
+  * `MarkdownParser` — headings (H1–H6), fenced code blocks, tables, ordered/unordered lists; strips YAML front-matter when present.
+  * `HtmlParser` — BeautifulSoup-driven extraction of headings, lists, tables, `<pre>` blocks; drops `<script>` and `<style>` nodes automatically.
+  * `PlainTextParser` — normalizes whitespace and splits long text into paragraphs.
+  * `BaseParser` ABC + `get_parser()` factory.
+  * `models.py` — `Document`, `Element`, `Chunk` dataclasses shared across parsers and chunkers.
 
 * **`docconvert.chunkers` subpackage** — text chunking utilities for RAG pipelines.
-  * [`FixedSizeChunker`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/chunkers/fixed_size.py) — sliding window by character count with configurable overlap.
-  * [`SentenceChunker`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/chunkers/sentence.py) — splits on sentence boundaries (`！？。.!`) and respects chunk size.
-  * [`MarkdownChunker`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/chunkers/markdown.py) — groups consecutive markdown paragraphs under the same heading anchor.
-  * [`BaseChunker`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/chunkers/base.py) ABC + [`get_chunker()`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/chunkers/__init__.py) factory.
+  * `FixedSizeChunker` — sliding window by character count with configurable overlap.
+  * `SentenceChunker` — splits on sentence boundaries (`！？。.!`) and respects chunk size.
+  * `MarkdownChunker` — groups consecutive markdown paragraphs under the same heading anchor.
+  * `BaseChunker` ABC + `get_chunker()` factory.
 
 ### Changed
 
