@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## \[Unreleased]
 
+<!-- Nothing yet — PR [#2](https://github.com/leop017/DocConvert/pull/2) landed under v2.0.5. -->
+
+***
+
+## \[v2.0.5] — 2026-09-02
+
+### Added
+
+* **`docconvert.parsers` subpackage** — full parser layer feeding `Document` / `Element` data models.
+  * [`MarkdownParser`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/parsers/markdown.py) — headings (H1–H6), fenced code blocks, tables, ordered/unordered lists; strips YAML front-matter when present.
+  * [`HtmlParser`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/parsers/html.py) — BeautifulSoup-driven extraction of headings, lists, tables, `<pre>` blocks; drops `<script>` and `<style>` nodes automatically.
+  * [`PlainTextParser`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/parsers/plain.py) — normalizes whitespace and splits long text into paragraphs.
+  * [`BaseParser`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/parsers/base.py) ABC + [`get_parser()`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/parsers/__init__.py) factory.
+  * [`models.py`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/parsers/models.py) — `Document`, `Element`, `Chunk` dataclasses shared across parsers and chunkers.
+
+* **`docconvert.chunkers` subpackage** — text chunking utilities for RAG pipelines.
+  * [`FixedSizeChunker`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/chunkers/fixed_size.py) — sliding window by character count with configurable overlap.
+  * [`SentenceChunker`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/chunkers/sentence.py) — splits on sentence boundaries (`！？。.!`) and respects chunk size.
+  * [`MarkdownChunker`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/chunkers/markdown.py) — groups consecutive markdown paragraphs under the same heading anchor.
+  * [`BaseChunker`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/chunkers/base.py) ABC + [`get_chunker()`](file:///C:/Users/Administrator/Documents/q/github-codex/docconvert/chunkers/__init__.py) factory.
+
 ### Changed
 
 * **CI: bump GitHub Actions** (Dependabot PR [#1](https://github.com/leop017/DocConvert/pull/1), commit `a3d9d63`)
@@ -18,8 +39,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   All five upgrades were verified by the CI matrix (ubuntu/windows × Python 3.10/3.11) before merge. No source-level changes are required; only the pinned Action versions changed.
 
+### Removed
+
+* `docconvert.chunkers.table_chunker` — was an empty ABC stub with no tests or downstream usage; replaced by the three concrete chunkers above.
+
 ### Notes
 
+* `docconvert.parsers.semantic` shim preserved: `BaseParser` is re-exported from there for backwards compat.
 * Dependabot is now enabled (`.github/dependabot.yml`) and will open weekly PRs for both the `pip` and `github-actions` ecosystems.
 
 ***
