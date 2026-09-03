@@ -74,7 +74,9 @@ jobs:
           fi
           rc=${PIPESTATUS[0]}
           echo "===== exit=$rc =====" | tee -a ci-artifacts/unittest.log
-          coverage report --show-missing 2>&1 | tee ci-artifacts/coverage-report.txt
+          FAIL_UNDER=""
+          if [ "$RUNNER_OS" = "Linux" ]; then FAIL_UNDER="--fail-under=85"; fi
+          coverage report --show-missing $FAIL_UNDER 2>&1 | tee ci-artifacts/coverage-report.txt
           coverage xml -o ci-artifacts/coverage.xml
           coverage html -d ci-artifacts/coverage-html
           exit $rc
