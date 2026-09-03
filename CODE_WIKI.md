@@ -1,6 +1,6 @@
 # DocConvert Code Wiki
 
-> **项目**：DocConvert v2.0.0
+> **项目**：DocConvert v2.0.5
 > **描述**：Excel（`.xlsx`/`.xls`）和 Word（`.docx`/`.doc`）文档转 HTML / Markdown / JSON 的多格式转换工具
 > **语言**：Python ≥ 3.10
 > **许可证**：MIT
@@ -49,8 +49,8 @@ main.py                          ← 程序入口
                     ├── models/         ← 数据模型
                     ├── config/         ← 配置
                     ├── gui/            ← Tkinter 界面
-                    ├── parsers/        ← 预留扩展点（当前仅 ABC）
-                    └── chunkers/       ← 预留扩展点（当前仅 ABC）
+                    ├── parsers/        ← MarkdownParser / HtmlParser / PlainTextParser
+                    └── chunkers/       ← FixedSizeChunker / SentenceChunker / MarkdownChunker
 ```
 
 ### 数据流
@@ -115,13 +115,26 @@ github-codex/
 │   ├── gui/
 │   │   ├── __init__.py
 │   │   └── app.py               # DocConvertApp（Tkinter GUI）
-│   ├── parsers/                 # 预留扩展点（仅 BaseParser ABC）
-│   └── chunkers/                # 预留扩展点（仅 BaseChunker ABC）
+│   ├── parsers/
+│   │   ├── __init__.py
+│   │   ├── base.py              # BaseParser ABC
+│   │   ├── markdown.py          # MarkdownParser：解析 Markdown heading/subtree
+│   │   ├── html.py              # HtmlParser：解析 HTML 结构化内容
+│   │   └── plain_text.py        # PlainTextParser：原始文本
+│   └── chunkers/
+│       ├── __init__.py          # get_chunker() 工厂函数
+│       ├── base.py              # BaseChunker ABC
+│       ├── fixed_size.py        # FixedSizeChunker：固定字符窗口 + overlap
+│       ├── sentence.py          # SentenceChunker：句子边界切分
+│       └── markdown.py          # MarkdownChunker：按 heading subtree 切分
 ├── tests/                       # unittest 测试套件
 │   ├── test_controller.py
+│   ├── test_cli.py
 │   ├── test_cleaners.py
 │   ├── test_excel_converter.py
 │   ├── test_exporters.py
+│   ├── test_parsers.py
+│   ├── test_chunkers.py
 │   ├── test_logger.py
 │   ├── test_models.py
 │   ├── test_utils.py
@@ -498,12 +511,16 @@ def get_exporter(fmt: str) -> BaseExporter:
 
 ---
 
-### 4.10 预留扩展点
+### 4.10 Parsers 与 Chunkers
 
 | 模块 | 基类 | 当前实现 | 用途 |
 |------|------|----------|------|
-| `parsers/` | `BaseParser` | 无具体实现 | 语义解析（预留） |
-| `chunkers/` | `BaseChunker` | 无具体实现 | 内容分块（预留） |
+| `parsers/markdown.py` | `BaseParser` | `MarkdownParser` | 按 heading subtree 解析 Markdown，输出带 `start/end` 位置的 `Element` 列表 |
+| `parsers/html.py` | `BaseParser` | `HtmlParser` | 解析 HTML 结构化内容，提取标题/段落/列表等元素 |
+| `parsers/plain_text.py` | `BaseParser` | `PlainTextParser` | 原始文本无结构解析，整段作为单个 chunk |
+| `chunkers/fixed_size.py` | `BaseChunker` | `FixedSizeChunker` | 固定字符窗口切分，支持 `chunk_overlap` 滑动窗口 |
+| `chunkers/sentence.py` | `BaseChunker` | `SentenceChunker` | 按句子边界切分，保留完整句子 |
+| `chunkers/markdown.py` | `BaseChunker` | `MarkdownChunker` | 按 heading subtree 分块，超长块 fallback 到字符切分 |
 
 ---
 
@@ -648,14 +665,17 @@ python -m unittest discover -s tests -v
 
 | 测试文件 | 测试目标 |
 |----------|----------|
-| `test_controller.py` | 批量转换、取消、覆写检查 |
+| `test_controller.py` | 批量转换、取消、覆写检查、GUI 状态 |
+| `test_cli.py` | CLI 参数解析、错误路径、多格式输出 |
 | `test_cleaners.py` | 页码移除、空行折叠、去重、空格归一化 |
 | `test_excel_converter.py` | 合并单元格处理、多 sheet 转换 |
 | `test_exporters.py` | 三种导出器的数据路由 |
+| `test_parsers.py` | Markdown / HTML / PlainText 解析器 |
+| `test_chunkers.py` | 三种 chunker 的策略正确性 |
 | `test_logger.py` | 日志级别更新行为 |
 | `test_models.py` | MergeInfo / ProgressEvent |
 | `test_utils.py` | clean_filename、escape_md_cell、html_to_md |
-| `test_word_doc_sheets.py` | Word 段落/表格读取、Doc 文件处理 |
+| `test_word_doc_sheets.py` | Word 段落/表格读取、Doc 文件处理、BUG 6 回归 |
 
 ### 6.4 打包为可执行文件
 
