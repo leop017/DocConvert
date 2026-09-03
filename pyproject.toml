@@ -90,3 +90,8 @@ ignore = [
 [tool.ruff.lint.isort]
 known-first-party = ["docconvert", "tests"]
 combine-as-imports = true
+
+[tool.coverage.run]
+omit = [
+    "docconvert/gui/app.py",
+]
