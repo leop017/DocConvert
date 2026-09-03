@@ -93,6 +93,8 @@ class TestDocConverterJsonFormat(unittest.TestCase):
 class TestDocConverterHtmlAndMd(unittest.TestCase):
     """DocConverter HTML/MD paths must work when textract is mocked."""
 
+    _has_textract = __import__("importlib").util.find_spec("textract") is not None
+
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
@@ -101,6 +103,7 @@ class TestDocConverterHtmlAndMd(unittest.TestCase):
         self.out_dir = Path(self.tmp.name) / "out"
         self.out_dir.mkdir()
 
+    @unittest.skipUnless(_has_textract, "textract not installed (Linux/macOS only; Windows skips)")
     @patch("textract.process", return_value=b"hello world")
     def test_html_output_contains_doctype(self, _m):
         c = DocConverter()
@@ -111,6 +114,7 @@ class TestDocConverterHtmlAndMd(unittest.TestCase):
         self.assertIn("<!DOCTYPE html>", content)
         self.assertIn("hello world", content)
 
+    @unittest.skipUnless(_has_textract, "textract not installed (Linux/macOS only; Windows skips)")
     @patch("textract.process", return_value=b"hello world")
     def test_md_output_has_source_comment(self, _m):
         c = DocConverter()
@@ -121,6 +125,7 @@ class TestDocConverterHtmlAndMd(unittest.TestCase):
         self.assertIn("<!-- source:", content)
         self.assertIn("hello world", content)
 
+    @unittest.skipUnless(_has_textract, "textract not installed (Linux/macOS only; Windows skips)")
     @patch("textract.process", return_value=b"hello world")
     def test_enhanced_md_wraps_in_pre(self, _m):
         c = DocConverter()
@@ -131,6 +136,7 @@ class TestDocConverterHtmlAndMd(unittest.TestCase):
         self.assertIn("```", content)
         self.assertIn("hello world", content)
 
+    @unittest.skipUnless(_has_textract, "textract not installed (Linux/macOS only; Windows skips)")
     @patch("textract.process", side_effect=Exception("boom"))
     def test_conversion_error_is_reported(self, _m):
         c = DocConverter()
@@ -140,6 +146,7 @@ class TestDocConverterHtmlAndMd(unittest.TestCase):
         self.assertEqual(errors[0][0], "t.doc")
         self.assertIn("boom", errors[0][1])
 
+    @unittest.skipUnless(_has_textract, "textract not installed (Linux/macOS only; Windows skips)")
     @patch("textract.process", return_value=b"hello world")
     def test_unsupported_format_raises(self, _m):
         c = DocConverter()

@@ -65,6 +65,7 @@ jobs:
           python --version 2>&1 | tee ci-artifacts/python-version.txt
           pip list 2>/dev/null | tee ci-artifacts/pip-list.txt || true
           COVERAGE_SOURCE="docconvert"
+          export PYTHONIOENCODING=utf-8
           if [ "$RUNNER_OS" = "Linux" ]; then
             echo "===== Running under xvfb =====" | tee ci-artifacts/unittest.log
             xvfb-run -a coverage run --source=$COVERAGE_SOURCE -m unittest discover -s tests -v 2>&1 | tee -a ci-artifacts/unittest.log
