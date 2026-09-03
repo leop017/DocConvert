@@ -120,7 +120,7 @@ class TestCLIConversion(unittest.TestCase):
             "--output", self.out_dir,
         ])
         self.assertEqual(result, 0)
-        out_path = os.path.join(self.out_dir, "TEST_Sheet1.html")
+        out_path = os.path.join(self.out_dir, "test_Sheet1.html")
         self.assertTrue(os.path.exists(out_path))
 
     def test_successful_xlsx_md_conversion(self):
@@ -130,7 +130,7 @@ class TestCLIConversion(unittest.TestCase):
             "--output", self.out_dir,
         ])
         self.assertEqual(result, 0)
-        out_path = os.path.join(self.out_dir, "TEST_Sheet1.md")
+        out_path = os.path.join(self.out_dir, "test_Sheet1.md")
         self.assertTrue(os.path.exists(out_path))
 
     def test_successful_xlsx_json_conversion(self):
@@ -140,7 +140,7 @@ class TestCLIConversion(unittest.TestCase):
             "--output", self.out_dir,
         ])
         self.assertEqual(result, 0)
-        out_path = os.path.join(self.out_dir, "TEST_Sheet1.json")
+        out_path = os.path.join(self.out_dir, "test_Sheet1.json")
         self.assertTrue(os.path.exists(out_path))
 
     def test_enhanced_flag_accepted(self):
