@@ -1,4 +1,5 @@
 import os
+import re
 import tempfile
 import tkinter as tk
 import unittest
@@ -405,9 +406,11 @@ class TestGuiWindowSizeFitsContent(unittest.TestCase):
         app = None
         try:
             app = DocConvertApp(root)
-            root.update_idletasks()
-            root.update_idletasks()
-            root.update_idletasks()
+            # Call update_idletasks multiple times to ensure the layout
+            # engine has fully processed all geometry requests, including
+            # the auto-resize that happens inside DocConvertApp.__init__.
+            for _ in range(5):
+                root.update_idletasks()
             actual_h = root.winfo_height()
             # convert_btn is the "开始转换" button in the bottom bar.
             # On headless / remote-display CI runners winfo_height() may
@@ -419,11 +422,17 @@ class TestGuiWindowSizeFitsContent(unittest.TestCase):
             btn = app.convert_btn
             btn_y = btn.winfo_y()
             btn_h = btn.winfo_height()
+            # On some headless displays winfo_height may report 0 for
+            # unrealized widgets; fall back to winfo_reqheight in that case.
+            if actual_h == 0:
+                actual_h = root.winfo_reqheight()
+            self.assertGreater(actual_h, 0, "Window height must be positive")
             self.assertLessEqual(
                 btn_y + btn_h, actual_h,
                 f"Convert button bottom ({btn_y + btn_h}) extends past window height ({actual_h})",
             )
             req_h = root.winfo_reqheight()
+            self.assertGreater(req_h, 0, "Content request height must be positive")
             self.assertGreaterEqual(
                 actual_h, req_h - 150,
                 f"Window height {actual_h} too small (content requires {req_h}); bottom bar would be clipped",
@@ -441,8 +450,21 @@ class TestGuiWindowSizeFitsContent(unittest.TestCase):
         root = tk.Tk()
         try:
             DocConvertApp(root)
-            root.update_idletasks()
-            actual_h = int(root.geometry().split('x')[1].split('+')[0])
+            # Ensure layout is fully computed before reading dimensions.
+            for _ in range(5):
+                root.update_idletasks()
+            # Parse the geometry string (e.g. "780x881+156+156").
+            # On some headless X servers the string may omit offsets,
+            # so handle both "WxH" and "WxH+X+Y" formats defensively.
+            geom = root.geometry()
+            m = re.search(r'(\d+)x(\d+)', geom)
+            if m:
+                actual_h = int(m.group(2))
+            else:
+                # Fallback: use winfo_reqheight which reports the content
+                # size the window manager has allocated.
+                actual_h = root.winfo_reqheight()
+            self.assertGreater(actual_h, 0, "Window height must be positive")
             self.assertGreaterEqual(actual_h, 720)
         finally:
             root.destroy()
@@ -695,7 +717,10 @@ class TestGuiProgressResetOnAlreadyRunning(unittest.TestCase):
             # Trigger the rejection path.
             app._convert()
             # Tk configure calls are applied on the next update pass.
-            root.update()
+            # Call update() several times to ensure the event queue is
+            # fully flushed, especially on slow headless displays.
+            for _ in range(5):
+                root.update()
             self.assertEqual(str(app.progress['mode']), 'determinate')
             # And the value must be reset to 0 so the next run starts fresh.
             self.assertEqual(float(app.progress['value']), 0.0)
