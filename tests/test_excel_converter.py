@@ -874,5 +874,193 @@ class TestExcelConverterSheetNameCollision(unittest.TestCase):
         self.assertEqual(len(set(existing)), 2)
 
 
+class TestExcelConverterEmptyHeaderFallback(unittest.TestCase):
+    """When all header values in rows_data are falsy, _generate_json_data
+    must fall back to the first non-empty value found in each column.
+    """
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.xlsx = os.path.join(self.tmp.name, "t.xlsx")
+        wb = Workbook()
+        wb.remove(wb.active)
+        ws = wb.create_sheet("S")
+        ws.append(["", ""])   # all-empty header row
+        ws.append(["val_a", "val_b"])
+        ws.append(["x", "y"])
+        wb.save(self.xlsx)
+        self.out_dir = Path(self.tmp.name) / "out"
+        self.out_dir.mkdir()
+
+    def test_empty_header_falls_back_to_first_row(self):
+        # pandas auto-names empty headers as "Unnamed: N", so we test the
+        # fallback by calling _generate_json_data directly with falsy headers.
+        from docconvert.converters.excel import _generate_json_data
+        rows_data = [["", ""], ["val_a", "val_b"], ["x", "y"]]
+        result = json.loads(_generate_json_data(rows_data, {}, "S"))
+        self.assertEqual(result["metadata"]["headers"], ["val_a", "val_b"])
+
+
+class TestExcelConverterSingleSheetNoDict(unittest.TestCase):
+    """pd.read_excel with a single sheet and no sheets= param returns a
+    DataFrame (not a dict). The converter must wrap it so downstream code
+    sees a dict keyed by sheet name.
+    """
+
+    def test_single_sheet_returns_one_result(self):
+        c = ExcelConverter()
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        xlsx = os.path.join(tmp.name, "t.xlsx")
+        _make_xlsx(xlsx, {"Only": [["A"], ["1"]]})
+        out = Path(tmp.name) / "out"
+        out.mkdir()
+        results, errors = c.convert(xlsx, "html", out)
+        self.assertEqual(errors, [])
+        self.assertEqual(len(results), 1)
+
+
+class TestExcelConverterXlsImportError(unittest.TestCase):
+    """Converting .xls without xlrd installed must raise RuntimeError."""
+
+    def test_xls_without_xlrd_raises(self):
+        import builtins
+        from unittest.mock import patch
+        c = ExcelConverter()
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        xls = os.path.join(tmp.name, "t.xls")
+        with open(xls, "wb") as f:
+            f.write(b"fake xls")
+        out = Path(tmp.name) / "out"
+        out.mkdir()
+        # Mock builtins.__import__ to simulate xlrd not being installed
+        real_import = builtins.__import__
+        def mock_import(name, *args, **kwargs):
+            if name == "xlrd":
+                raise ImportError("No module named 'xlrd'")
+            return real_import(name, *args, **kwargs)
+        with patch.object(builtins, '__import__', mock_import):
+            with self.assertRaises(RuntimeError) as ctx:
+                c.convert(xls, "html", out)
+            self.assertIn("xlrd", str(ctx.exception))
+
+
+class TestExcelConverterMergeIteration(unittest.TestCase):
+    """Directly test _iter_merge_legs and _cell_attrs for rowspan/colspan."""
+
+    def test_iter_merge_legs_yields_all_cells(self):
+        c = ExcelConverter()
+        info = MergeInfo(
+            rowspan=2, colspan=3, is_master=True,
+            is_merged=True, min_row=1, min_col=1, max_row=2, max_col=3,
+        )
+        legs = list(c._iter_merge_legs(info))
+        self.assertEqual(len(legs), 6)
+        self.assertIn((1, 1), legs)
+        self.assertIn((2, 3), legs)
+
+    def test_cell_attrs_includes_rowspan(self):
+        c = ExcelConverter()
+        info = MergeInfo(
+            rowspan=3, colspan=1, is_master=True,
+            is_merged=True, min_row=1, min_col=1, max_row=3, max_col=1,
+        )
+        attrs = c._cell_attrs(1, 1, info)
+        self.assertIn('rowspan="3"', attrs)
+        self.assertIn('data-rowspan="3"', attrs)
+
+    def test_cell_attrs_includes_colspan(self):
+        c = ExcelConverter()
+        info = MergeInfo(
+            rowspan=1, colspan=2, is_master=True,
+            is_merged=True, min_row=1, min_col=1, max_row=1, max_col=2,
+        )
+        attrs = c._cell_attrs(1, 1, info)
+        self.assertIn('colspan="2"', attrs)
+        self.assertIn('data-colspan="2"', attrs)
+
+
+class TestExcelConverterEmptyRowsGuard(unittest.TestCase):
+    """When a merge's max_row exceeds the post-dropna row count, the merge
+    must be removed entirely (not left dangling).
+    """
+
+    def test_merge_beyond_dropna_rows_is_dropped(self):
+        from docconvert.converters.excel import _XlsMergeRange
+        c = ExcelConverter()
+        merged_ranges = [
+            _XlsMergeRange(min_col=1, min_row=1, max_col=1, max_row=3)
+        ]
+        # Workbook row 2 maps to df index 0; drop that row -> merge spans a dropped row
+        dropped = {0}
+        remapped = c._filter_merges_for_dropped_rows(merged_ranges, dropped)
+        # Merge covering a dropped row must be removed
+        self.assertEqual(len(remapped), 0)
+
+
+class TestExcelConverterEnhancedMdMergeRendering(unittest.TestCase):
+    """Enhanced MD path must correctly render merge cells (master + slave)."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.xlsx = os.path.join(self.tmp.name, "t.xlsx")
+        _make_xlsx_with_merges(
+            self.xlsx, "S",
+            rows=[
+                ["M1", "M1", "B"],
+                ["A", "B", "C"],
+            ],
+            merges=["A1:B1"],
+        )
+        self.out_dir = Path(self.tmp.name) / "out"
+        self.out_dir.mkdir()
+
+    def test_enhanced_md_rendered(self):
+        c = ExcelConverter()
+        results, errors = c.convert(self.xlsx, "md", self.out_dir, enhanced_md=True)
+        self.assertEqual(errors, [])
+        content = Path(results[0][1]).read_text(encoding="utf-8")
+        self.assertIn("M1", content)
+        self.assertIn("A", content)
+
+
+class TestExcelConverterEscapeTableCells(unittest.TestCase):
+    """Test _escape_table_cells covers the isinstance(Tag) guard path."""
+
+    def test_pipe_escaped_via_escape_table_cells(self):
+        c = ExcelConverter()
+        from bs4 import BeautifulSoup
+        html = '<table><tr><td>| pipe |</td></tr></table>'
+        result = c._escape_table_cells(html)
+        self.assertIn("\\| pipe \\|", result)
+
+
+class TestExcelConverterColspanAttrs(unittest.TestCase):
+    """HTML output with colspan merge must include both rowspan and colspan
+    attrs when both are >1."""
+
+    def test_colspan_only_attr(self):
+        c = ExcelConverter()
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        xlsx = os.path.join(tmp.name, "t.xlsx")
+        _make_xlsx_with_merges(
+            xlsx, "S",
+            rows=[["H1", "H1", "H2"], ["a", "b", "c"]],
+            merges=["A1:B1"],
+        )
+        out = Path(tmp.name) / "out"
+        out.mkdir()
+        results, _ = c.convert(xlsx, "html", out)
+        content = Path(results[0][1]).read_text(encoding="utf-8")
+        self.assertIn('colspan="2"', content)
+        self.assertIn('data-colspan="2"', content)
+        # Must NOT have rowspan since it's only a colspan merge
+        self.assertNotIn('rowspan="2"', content)
+
+
 if __name__ == '__main__':
     unittest.main()

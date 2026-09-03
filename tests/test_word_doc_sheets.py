@@ -2,6 +2,7 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from docx import Document as DocxDocument
 
@@ -87,6 +88,71 @@ class TestDocConverterJsonFormat(unittest.TestCase):
         parsed = json.loads(content)
         self.assertIn("source", parsed)
         self.assertIn("content", parsed)
+
+
+class TestDocConverterHtmlAndMd(unittest.TestCase):
+    """DocConverter HTML/MD paths must work when textract is mocked."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.doc = os.path.join(self.tmp.name, "t.doc")
+        Path(self.doc).write_bytes(b"placeholder")
+        self.out_dir = Path(self.tmp.name) / "out"
+        self.out_dir.mkdir()
+
+    @patch("textract.process", return_value=b"hello world")
+    def test_html_output_contains_doctype(self, _m):
+        c = DocConverter()
+        results, errors = c.convert(self.doc, "html", self.out_dir)
+        self.assertEqual(errors, [])
+        self.assertEqual(len(results), 1)
+        content = Path(results[0][1]).read_text(encoding="utf-8")
+        self.assertIn("<!DOCTYPE html>", content)
+        self.assertIn("hello world", content)
+
+    @patch("textract.process", return_value=b"hello world")
+    def test_md_output_has_source_comment(self, _m):
+        c = DocConverter()
+        results, errors = c.convert(self.doc, "md", self.out_dir)
+        self.assertEqual(errors, [])
+        self.assertEqual(len(results), 1)
+        content = Path(results[0][1]).read_text(encoding="utf-8")
+        self.assertIn("<!-- source:", content)
+        self.assertIn("hello world", content)
+
+    @patch("textract.process", return_value=b"hello world")
+    def test_enhanced_md_wraps_in_pre(self, _m):
+        c = DocConverter()
+        results, errors = c.convert(self.doc, "md", self.out_dir, enhanced_md=True)
+        self.assertEqual(errors, [])
+        content = Path(results[0][1]).read_text(encoding="utf-8")
+        # html_to_md converts <pre> to fenced code block
+        self.assertIn("```", content)
+        self.assertIn("hello world", content)
+
+    @patch("textract.process", side_effect=Exception("boom"))
+    def test_conversion_error_is_reported(self, _m):
+        c = DocConverter()
+        results, errors = c.convert(self.doc, "html", self.out_dir)
+        self.assertEqual(results, [])
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0][0], "t.doc")
+        self.assertIn("boom", errors[0][1])
+
+    @patch("textract.process", return_value=b"hello world")
+    def test_unsupported_format_raises(self, _m):
+        c = DocConverter()
+        with self.assertRaises(ValueError) as ctx:
+            c._convert_doc(self.doc, "xml", self.out_dir)
+        self.assertIn("不支持的输出格式", str(ctx.exception))
+
+    def test_cancel_check_returns_empty(self):
+        c = DocConverter()
+        c.cancel_check = lambda: True
+        results, errors = c.convert(self.doc, "html", self.out_dir)
+        self.assertEqual(results, [])
+        self.assertEqual(errors, [])
 
 
 class TestWordConverterCancelCheck(unittest.TestCase):
